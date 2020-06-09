@@ -5,7 +5,6 @@
 ;; Transparency
 (set-frame-parameter (selected-frame) 'alpha '(90 90))
 (add-to-list 'default-frame-alist '(alpha 90 90))
-(eval-when-compile (require 'cl))
 (defun toggle-transparency ()
   (interactive)
   (if (/=
@@ -51,7 +50,7 @@
 
 ;; modes
 (whole-line-or-region-mode)
-(subword-mode)
+(global-subword-mode)
 
 ;; helm-swoop
 (global-set-key (kbd "C-c o") 'helm-swoop)
@@ -94,3 +93,7 @@
 (global-set-key (kbd "M-k") 'iflipb-previous-buffer)
 
 (setq company-bg-color (face-attribute 'default :background))
+
+(custom-set-faces
+ '(helm-selection ((t :background "gray25" :distant-foreground "black" :foreground "white smoke")))
+ )
