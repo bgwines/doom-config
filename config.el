@@ -106,6 +106,28 @@
 (after! haskell
   (setq haskell-interactive-popup-errors nil)
   (setq haskell-process-suggest-remove-import-lines nil)
+  (define-key haskell-mode-map (kbd "C-c C-d") 'haskell-w3m-open-haddock)
+
+  (define-key haskell-mode-map (kbd "C-x C-s")
+    (lambda ()
+      (interactive)
+      (save-excursion
+        (beginning-of-buffer)
+        ;; Sort the initial import block
+        (when (search-forward "import" nil t)
+          (beginning-of-line)
+          (haskell-sort-imports)
+          )
+
+        ;; Sort any following import blocks
+        (while (search-forward "
+
+import" nil t)
+          (beginning-of-line)
+          (haskell-sort-imports)
+          ))
+
+      (save-buffer)))
   )
 
 (after! smartparens
@@ -122,50 +144,17 @@
 (global-set-key (kbd "C-_") 'undo)
 (global-set-key (kbd "C-a") 'beginning-of-line)
 
-(turn-on-visual-line-mode)
-
-;; (defhydra hydra-auto-symbol-highlight (global-map "<f2>")
-;;   ("d" ahs-forward-definition "next definition")
-;;   ("D" ahs-backward-definition "previous definition")
-;;   ("e" ahs-to-iedit "iedit")
-;;   ("n" ahs-forward "next")
-;;   ("N" ahs-backward "previous")
-;;   ("p" ahs-backward "previous")
-;;   ("R" ahs-back-to-start "reset")
-;;   ("r" ahs-change-range "change range")
-;;   ("q" nil :exit t))
-
-;; (defun ahs ()
-;;   "Highlight the symbol under point with `auto-highlight-symbol'."
-;;   (interactive)
-;;   (unless (bound-and-true-p ahs-mode-line)
-;;     (auto-highlight-symbol-mode)
-;;     )
-;;   (ahs-highlight-now)
-;;   (hydra-auto-symbol-highlight/body))
-
-;; (defun quick-ahs-forward ()
-;;   "Go to the next occurrence of symbol under point with `auto-highlight-symbol'"
-;;   (interactive)
-;;   (quick-ahs-move t))
-
-;; (defun quick-ahs-backward ()
-;;   "Go to the previous occurrence of symbol under point with `auto-highlight-symbol'"
-;;   (interactive)
-;;   (quick-ahs-move nil))
-
-;; (defun quick-ahs-move (forward)
-;;   "Go to the next occurrence of symbol under point with `auto-highlight-symbol'"
-;;   (if forward
-;;       (progn
-;;         (hydra-auto-symbol-highlight/body)
-;;         (ahs-forward))
-;;     (progn
-;;       (hydra-auto-symbol-highlight/body)
-;;       (ahs-backward))))
+(global-visual-line-mode)
 
 (after! javascript
   (setq typescript-indent-level 2)
   )
 
 ;; (speedbar-add-supported-extension ".hs")
+
+(after! helm
+  ;; Helm buffer sort order is crazy without this; see
+  ;; https://github.com/emacs-helm/helm/issues/1492
+  (defun helm-buffers-sort-transformer@donot-sort (_ candidates _) candidates)
+  (advice-add 'helm-buffers-sort-transformer :around 'helm-buffers-sort-transformer@donot-sort)
+  )
