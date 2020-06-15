@@ -1,31 +1,44 @@
 
-;; (setq doom-theme 'doom-tomorrow-night)
-(setq doom-theme 'afternoon)
+;;;;; misc ;;;;;
 
-;; Transparency
-(set-frame-parameter (selected-frame) 'alpha '(90 90))
-(add-to-list 'default-frame-alist '(alpha 90 90))
-(defun toggle-transparency ()
-  (interactive)
-  (if (/=
-       (cadr (frame-parameter nil 'alpha))
-       100)
-      (set-frame-parameter nil 'alpha '(100 100))
-    (set-frame-parameter nil 'alpha '(90 90))))
+(global-set-key (kbd "M-?") 'help-command)
+(global-set-key (kbd "<tab>") 'indent-according-to-mode)
 
-;; Help
-(global-set-key (kbd "C-?") 'help-command)
+;;;;; buffers ;;;;;
 
-;; Editing
-(global-set-key (kbd "M-?") 'mark-paragraph)
-(global-set-key (kbd "C-h") 'delete-backward-char)
-(global-set-key (kbd "M-h") 'backward-kill-word)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+;;(setq ibuffer-saved-filter-groups
+;;      '(("home"
+;;         ("emacs" (or (filename . ".emacs.d")
+;;                      (filename . ".spacemacs")))
+;;                      (filename . "doom-emacs")))
+;;         ("quip/services" (filename . "quip/services"))
+;;         ("quip/templates" (filename . "quip/templates"))
+;;         ("quip/lib" (filename . "quip/lib"))
+;;         ("quip/data" (filename . "quip/data"))
+;;         ("quip/proto" (filename . "quip/proto"))
+;;         ("Magit" (name . "\*magit"))
+;;         ("Help" (or (name . "\*Help\*")
+;;                     (name . "\*Apropos\*")
+;;                     (name . "\*info\*"))))))
+;;(add-hook 'ibuffer-mode-hook
+;;          '(lambda ()
+;;             (ibuffer-switch-to-saved-filter-groups "home")))
+;; remapping lost keystrokes
+(after! ibuffer
+  (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-forward-filter-group))
 
-;; ace-jump-mode
-(global-set-key (kbd "C-0") 'ace-jump-mode)
-(global-set-key (kbd "C-9") 'ace-jump-line-mode)
+;; windmove
+(when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
+(global-set-key (kbd "C-x <up>") 'windmove-up)
+(global-set-key (kbd "C-x <down>") 'windmove-down)
+(global-set-key (kbd "C-x <right>") 'windmove-right)
+(global-set-key (kbd "C-x <left>") 'windmove-left)
+(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
+(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 
-;; Scratch
+ ;;;;; editing ;;;;;
+
 (defun new-scratch ()
   "open up a guaranteed new scratch buffer"
   (interactive)
@@ -33,23 +46,237 @@
                           for name = (format "scratch-%03i" num)
                           while (get-buffer name)
                           finally return name)))
-(global-set-key (kbd "<f7>") 'new-scratch)
 
-;; Multiple cursors
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+;; cursor navigation
+;; (this doesn't work)
+;;(global-set-key (kbd "C--") 'xref-pop-marker-stack)
+
+;; jump to start of line
+(global-set-key (kbd "C-'") 'back-to-indentation)
+
+;; something-to-char
+(defvaralias 'lazy-highlight-face 'isearch-lazy-highlight) ;; NOT sure why
+    ;; this fixes a thing
+    ;; but it definitely fixes something with the next two commands
+
+(defun zap-backwards-to-char (arg char)
+  (interactive "p\ncZap backwards to char: ")
+  (if (char-table-p translation-table-for-input)
+      (setq char (or (aref translation-table-for-input char) char)))
+  (kill-region (point) (progn
+                         (search-backward (char-to-string char)
+                                         nil nil arg)
+                         (forward-char)
+                         (point))))
+(global-set-key (kbd "M-;") 'zap-backwards-to-char)
+;; these two are broken
+;;(global-set-key (kbd "M-:") 'fastnav-mark-to-char-backward)
+;;(global-set-key (kbd "M-Z") 'fastnav-mark-to-char-forward)
+(global-set-key (kbd "M-z") 'zap-up-to-char)
+
+;; comment out region/line
+(global-set-key (kbd "C-/") 'whole-line-or-region-comment-dwim)
+
+;; avy
+(global-set-key (kbd "C-;") 'avy-goto-char)
+(global-set-key (kbd "C-:") 'avy-goto-char-2)
+
+;; multiple cursors
+(global-set-key (kbd "M-u") 'mc/mark-previous-like-this)
+(global-set-key (kbd "M-h") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+;; expand-region
+(global-set-key (kbd "M-a") 'er/contract-region)
+(global-set-key (kbd "M-s") 'er/expand-region)
+
+
+;;;;; deletion ;;;;;
+;; backwards
+(global-set-key (kbd "C-i") 'delete-backward-char)
+(global-set-key (kbd "M-i") 'subword-backward-kill)
+(global-set-key (kbd "M-I") 'backward-kill-sexp)
+
+(defun subword-backward-delete ()
+  (interactive)
+  (subword-backward-kill 1)
+  (setq kill-ring-yank-pointer (cdr kill-ring-yank-pointer))
+  )
+
+(after! helm-files
+  (define-key helm-map (kbd "C-i") 'delete-backward-char)
+  (define-key helm-map (kbd "M-i") 'subword-backward-delete)
+  (define-key helm-find-files-map (kbd "C-i") 'delete-backward-char)
+  (define-key helm-find-files-map (kbd "M-i") 'subword-backward-delete)
+  (define-key helm-find-files-map (kbd "C-k") 'kill-line-no-fill-kill-ring)
+  )
+(after! isearch
+  (define-key isearch-mode-map (kbd "C-i") 'isearch-del-char))
+(global-set-key (kbd "M-k") 'kill-whole-line)
+
+;;;;; cosmetics ;;;;;
+
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+;; (setq doom-theme 'doom-tomorrow-night)
+(setq doom-theme 'afternoon)
+(setq doom-font (font-spec :family "Source Code Pro" :size 18))
+
+;; dim inactive panes
+(defun highlight-selected-window ()
+  "Highlight selected window with a different background color."
+  (walk-windows (lambda (w)
+                  (unless (eq w (selected-window))
+                    (with-current-buffer (window-buffer w)
+                      (buffer-face-set '(:background "#333"))))))
+  (buffer-face-set 'default))
+(add-hook 'buffer-list-update-hook 'highlight-selected-window)
+
+;; cursor
+(setq-default cursor-type 'bar)
+;;(set-face-background hl-line-face "#333333")
+;;(set-face-attribute hl-line-face nil :underline t)
+
+;; moving a line
+(global-set-key (kbd "M-<up>") 'move-text-line-up)
+(global-set-key (kbd "M-<down>") 'move-text-line-down)
+
+;; spaces, not tabs
+(setq-default indent-tabs-mode nil)
+
+;; Always add newline at end of file.
+(setq require-final-newline t)
+
+;; When M-q formatting a comment, only use one space instead of two
+;; after a period.
+(set-variable 'sentence-end-double-space nil)
+
+;; auto-complete layer (company mode) UI
+(custom-set-faces
+ '(company-tooltip-common
+   ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection
+   ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+
+;; window pane resizing
+(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
+(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "S-C-<down>") 'shrink-window)
+(global-set-key (kbd "S-C-<up>") 'enlarge-window)
+
+;;;;; grep ;;;;;
+
+(global-set-key (kbd "M-g M-r") 'helm-projectile-ag)
+(global-set-key (kbd "C-t") 'helm-projectile-find-file)
+(setq helm-locate-command
+      "glocate %s %s"
+      helm-locate-create-db-command
+      "gupdatedb --output='%s' --localpaths='%s'")
+
+;; projectile
+(setq projectile-project-search-path '("~/quip"))
+(setq projectile-enable-caching t)
+(setq projectile-indexing-method 'native)
+(global-set-key (kbd "C-x C-r") 'helm-projectile-ag)
+
+;; dumb-jump
+(setq dumb-jump-default-project "~/quip")
+(global-set-key (kbd "M-.") 'dumb-jump-go)
+(setq dumb-jump-force-searcher 'ag)
+
+;; Automatically revert all buffers when files change on disk, e.g.
+;; after a git pull, git rebase, or python autoimports
+(global-auto-revert-mode t)
+
+(setq auto-save-default nil)
+
+;; Makes duplicate files show up as application.py|api instead of the <2>.
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward)
+
+;; follow symlinks
+(setq-default vs-follow-symlinks t)
+(setq vc-follow-symlinks t)
+
+;;;;; hooks ;;;;;
+
+;; trim whitespace on save
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+;; automatically save buffers associated with files on buffer switch
+;; and on windows switch
+(defadvice switch-to-buffer (before save-buffer-now activate)
+  (when buffer-file-name (save-buffer)))
+(defadvice other-window (before other-window-now activate)
+  (when buffer-file-name (save-buffer)))
+(defadvice windmove-up (before other-window-now activate)
+  (when buffer-file-name (save-buffer)))
+(defadvice windmove-down (before other-window-now activate)
+  (when buffer-file-name (save-buffer)))
+(defadvice windmove-left (before other-window-now activate)
+  (when buffer-file-name (save-buffer)))
+(defadvice windmove-right (before other-window-now activate)
+  (when buffer-file-name (save-buffer)))
+
+;; 80 char limit
+(add-hook 'c++-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+(add-hook 'java-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{101\\}" 'hi-yellow)))
+(add-hook 'js-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+(add-hook 'jsx-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+(add-hook 'protobuf-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+(add-hook 'python-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+
+;; rename-file
+(defun rename-file-and-buffer (new-name)
+"Renames both current buffer and file it's visiting to NEW-NAME."
+(interactive "sNew name: ")
+(let ((name (buffer-name))
+  (filename (buffer-file-name)))
+  (if (not filename)
+    (message "Buffer '%s' is not visiting a file!" name)
+    (if (get-buffer new-name)
+      (message "A buffer named '%s' already exists!" new-name)
+        (progn
+          (rename-file name new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil))))))
+
+
+;; -----------------
+;; Tom's stuff below
+;; -----------------
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; Transparency                                        ;;
+;; (set-frame-parameter (selected-frame) 'alpha '(90 90)) ;;
+;; (add-to-list 'default-frame-alist '(alpha 90 90))      ;;
+;; (defun toggle-transparency ()                          ;;
+;;   (interactive)                                        ;;
+;;   (if (/=                                              ;;
+;;        (cadr (frame-parameter nil 'alpha))             ;;
+;;        100)                                            ;;
+;;       (set-frame-parameter nil 'alpha '(100 100))      ;;
+;;     (set-frame-parameter nil 'alpha '(90 90))))        ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; Help                                          ;;
+;; (global-set-key (kbd "C-?") 'help-command)       ;;
+;;                                                  ;;
+;; ;; Editing                                       ;;
+;; (global-set-key (kbd "M-?") 'mark-paragraph)     ;;
+;;                                                  ;;
+;; ;; ace-jump-mode                                 ;;
+;; (global-set-key (kbd "C-0") 'ace-jump-mode)      ;;
+;; (global-set-key (kbd "C-9") 'ace-jump-line-mode) ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; magit
 (global-set-key (kbd "<f8>") 'magit-status)
 
-;; next-error and previous-error
-(global-set-key (kbd "C-x C-n") 'flycheck-next-error)
-(global-set-key (kbd "C-x C-p") 'flycheck-previous-error)
-
 ;; modes
-(whole-line-or-region-mode)
+;; (whole-line-or-region-mode)
 (global-subword-mode)
 
 ;; helm-swoop
@@ -84,13 +311,7 @@
 (global-set-key (kbd "C-t") 'projectile-find-file)
 
 ;; projectile-find-file
-(global-set-key (kbd "M-;") 'whole-line-or-region-comment-dwim)
-
-(setq doom-modeline-buffer-file-name-style 'truncate-with-project)
-
-;; iflipb
-(global-set-key (kbd "M-j") 'iflipb-next-buffer)
-(global-set-key (kbd "M-k") 'iflipb-previous-buffer)
+(setq doom-modeline-buffer-file-name-style 'truncat?rre-with-project)
 
 (setq company-bg-color (face-attribute 'default :background))
 
@@ -103,54 +324,19 @@
 (global-set-key (kbd "<S-up>") 'windmove-up)
 (global-set-key (kbd "<S-down>") 'windmove-down)
 
-(after! haskell
-  (setq haskell-interactive-popup-errors nil)
-  (setq haskell-process-suggest-remove-import-lines nil)
-  (define-key haskell-mode-map (kbd "C-c C-d") 'haskell-w3m-open-haddock)
-
-  (define-key haskell-mode-map (kbd "C-x C-s")
-    (lambda ()
-      (interactive)
-      (save-excursion
-        (beginning-of-buffer)
-        ;; Sort the initial import block
-        (when (search-forward "import" nil t)
-          (beginning-of-line)
-          (haskell-sort-imports)
-          )
-
-        ;; Sort any following import blocks
-        (while (search-forward "
-
-import" nil t)
-          (beginning-of-line)
-          (haskell-sort-imports)
-          ))
-
-      (save-buffer)))
-  )
-
 (after! smartparens
-  (load "/home/tom/doom-config/my-smartparens.el")
+  (load "~/doom-config/my-smartparens.el")
   )
 ;; (add-to-list 'completion-styles 'flex)
 ;; (setq completion-styles '(flex))
 
 ;; (setq helm-completion-style 'helm-fuzzy)
 
-(global-set-key (kbd "M-z") 'zap-up-to-char)
-
 ;; Put some Doom defaults back to normal
 (global-set-key (kbd "C-_") 'undo)
 (global-set-key (kbd "C-a") 'beginning-of-line)
 
 (global-visual-line-mode)
-
-(after! javascript
-  (setq typescript-indent-level 2)
-  )
-
-;; (speedbar-add-supported-extension ".hs")
 
 (after! helm
   ;; Helm buffer sort order is crazy without this; see
