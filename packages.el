@@ -7,3 +7,4 @@
 (package! helm-swoop)
 (package! w3m)
 (package! zoom-window)
+(package! undo-tree)

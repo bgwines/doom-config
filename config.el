@@ -39,6 +39,9 @@
 
  ;;;;; editing ;;;;;
 
+;; undo
+(global-set-key (kbd "M-_") 'undo-tree-redo)
+
 (defun new-scratch ()
   "open up a guaranteed new scratch buffer"
   (interactive)
@@ -273,6 +276,7 @@
 
 (global-subword-mode)
 (global-visual-line-mode)
+(global-undo-tree-mode)
 
 ;;;;; smartparens ;;;;;
 
@@ -288,10 +292,6 @@
 (global-set-key (kbd "C-c o") 'helm-swoop)
 
 (setq doom-modeline-buffer-file-name-style 'truncat?rre-with-project)
-
-;; Put some Doom defaults back to normal
-(global-set-key (kbd "C-_") 'undo)
-(global-set-key (kbd "C-a") 'beginning-of-line)
 
 (after! helm
   ;; Helm buffer sort order is crazy without this; see
