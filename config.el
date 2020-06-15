@@ -114,6 +114,28 @@
   (define-key isearch-mode-map (kbd "C-i") 'isearch-del-char))
 (global-set-key (kbd "M-k") 'kill-whole-line)
 
+;; moving a line
+(defun move-line-up ()
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+(global-set-key (kbd "M-<up>") 'move-line-up)
+(global-set-key (kbd "M-<down>") 'move-line-down)
+
+;; spaces, not tabs
+(setq-default indent-tabs-mode nil)
+
+;; Always add newline at end of file.
+(setq require-final-newline t)
+
 ;;;;; cosmetics ;;;;;
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -137,41 +159,48 @@
 ;;(set-face-background hl-line-face "#333333")
 ;;(set-face-attribute hl-line-face nil :underline t)
 
-;; moving a line
-(defun move-line-up ()
-  (interactive)
-  (transpose-lines 1)
-  (forward-line -2)
-  (indent-according-to-mode))
-
-(defun move-line-down ()
-  (interactive)
-  (forward-line 1)
-  (transpose-lines 1)
-  (forward-line -1)
-  (indent-according-to-mode))
-(global-set-key (kbd "M-<up>") 'move-line-up)
-(global-set-key (kbd "M-<down>") 'move-line-down)
-
-;; spaces, not tabs
-(setq-default indent-tabs-mode nil)
-
-;; Always add newline at end of file.
-(setq require-final-newline t)
-
-;; When M-q formatting a comment, only use one space instead of two
-;; after a period.
-(set-variable 'sentence-end-double-space nil)
-
 ;; window pane resizing
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "S-C-<down>") 'shrink-window)
 (global-set-key (kbd "S-C-<up>") 'enlarge-window)
 
-;;;;; grep ;;;;;
+;; When M-q formatting a comment, only use one space instead of two
+;; after a period.
+(set-variable 'sentence-end-double-space nil)
 
+;; 80 char limit
+(add-hook 'c++-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+(add-hook 'java-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{101\\}" 'hi-yellow)))
+(add-hook 'js-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+(add-hook 'jsx-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+(add-hook 'protobuf-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+(add-hook 'python-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+
+;;;;; Projectile / grepping ;;;;;
+
+;; projectile-helm-ag
+(defun projectile-helm-ag (arg)
+  "Run helm-do-ag relative to the project root.  Or, with prefix arg ARG, relative to the current directory."
+  (interactive "P")
+  (if arg
+      (progn
+        ;; Have to kill the prefix arg so it doesn't get forwarded
+        ;; and screw up helm-do-ag
+        (set-variable 'current-prefix-arg nil)
+
+        (if dired-directory
+            (helm-do-ag dired-directory)
+          (helm-do-ag (file-name-directory (buffer-file-name)))
+          )
+        )
+    (helm-do-ag (projectile-project-root))
+    ))
+;; which of these is better? The former, right?
+(global-set-key (kbd "C-x C-r") 'projectile-helm-ag)
 (global-set-key (kbd "M-g M-r") 'helm-projectile-ag)
+
+;; (global-set-key (kbd "C-t") 'projectile-find-file) (Tom uses this)
 (global-set-key (kbd "C-t") 'helm-projectile-find-file)
 (setq helm-locate-command
       "glocate %s %s"
@@ -182,18 +211,11 @@
 (setq projectile-project-search-path '("~/quip"))
 (setq projectile-enable-caching t)
 (setq projectile-indexing-method 'native)
-(global-set-key (kbd "C-x C-r") 'helm-projectile-ag)
 
 ;; dumb-jump
 (setq dumb-jump-default-project "~/quip")
 (global-set-key (kbd "M-.") 'dumb-jump-go)
 (setq dumb-jump-force-searcher 'ag)
-
-;; Automatically revert all buffers when files change on disk, e.g.
-;; after a git pull, git rebase, or python autoimports
-(global-auto-revert-mode t)
-
-(setq auto-save-default nil)
 
 ;; Makes duplicate files show up as application.py|api instead of the <2>.
 (require 'uniquify)
@@ -203,7 +225,13 @@
 (setq-default vs-follow-symlinks t)
 (setq vc-follow-symlinks t)
 
-;;;;; hooks ;;;;;
+;;;;; saving ;;;;;
+
+;; Automatically revert all buffers when files change on disk, e.g.
+;; after a git pull, git rebase, or python autoimports
+(global-auto-revert-mode t)
+
+(setq auto-save-default nil)
 
 ;; trim whitespace on save
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -223,13 +251,7 @@
 (defadvice windmove-right (before other-window-now activate)
   (when buffer-file-name (save-buffer)))
 
-;; 80 char limit
-(add-hook 'c++-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
-(add-hook 'java-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{101\\}" 'hi-yellow)))
-(add-hook 'js-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
-(add-hook 'jsx-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
-(add-hook 'protobuf-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
-(add-hook 'python-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+;;;;; assorted ;;;;;
 
 ;; rename-file
 (defun rename-file-and-buffer (new-name)
@@ -247,101 +269,29 @@
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 
+;;;;; modes ;;;;;
+
+(global-subword-mode)
+(global-visual-line-mode)
+
+;;;;; smartparens ;;;;;
+
+(after! smartparens
+  (load "~/doom-config/my-smartparens.el")
+  )
 
 ;; -----------------
 ;; Tom's stuff below
 ;; -----------------
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; Transparency                                        ;;
-;; (set-frame-parameter (selected-frame) 'alpha '(90 90)) ;;
-;; (add-to-list 'default-frame-alist '(alpha 90 90))      ;;
-;; (defun toggle-transparency ()                          ;;
-;;   (interactive)                                        ;;
-;;   (if (/=                                              ;;
-;;        (cadr (frame-parameter nil 'alpha))             ;;
-;;        100)                                            ;;
-;;       (set-frame-parameter nil 'alpha '(100 100))      ;;
-;;     (set-frame-parameter nil 'alpha '(90 90))))        ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; Help                                          ;;
-;; (global-set-key (kbd "C-?") 'help-command)       ;;
-;;                                                  ;;
-;; ;; Editing                                       ;;
-;; (global-set-key (kbd "M-?") 'mark-paragraph)     ;;
-;;                                                  ;;
-;; ;; ace-jump-mode                                 ;;
-;; (global-set-key (kbd "C-0") 'ace-jump-mode)      ;;
-;; (global-set-key (kbd "C-9") 'ace-jump-line-mode) ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; magit
-(global-set-key (kbd "<f8>") 'magit-status)
-
-;; modes
-;; (whole-line-or-region-mode)
-(global-subword-mode)
-
 ;; helm-swoop
 (global-set-key (kbd "C-c o") 'helm-swoop)
 
-;; projectile-helm-ag
-(defun projectile-helm-ag (arg)
-  "Run helm-do-ag relative to the project root.  Or, with prefix arg ARG, relative to the current directory."
-  (interactive "P")
-  (if arg
-      (progn
-        ;; Have to kill the prefix arg so it doesn't get forwarded
-        ;; and screw up helm-do-ag
-        (set-variable 'current-prefix-arg nil)
-
-        (if dired-directory
-            (helm-do-ag dired-directory)
-          (helm-do-ag (file-name-directory (buffer-file-name)))
-          )
-        )
-    (helm-do-ag (projectile-project-root))
-    ))
-(global-set-key (kbd "C-x C-r") 'projectile-helm-ag)
-
-;; Disable line numbers
-(setq display-line-numbers-type nil)
-
-;; expand-region
-(global-set-key "\M-s" 'er/expand-region)
-
-;; projectile-find-file
-(global-set-key (kbd "C-t") 'projectile-find-file)
-
-;; projectile-find-file
 (setq doom-modeline-buffer-file-name-style 'truncat?rre-with-project)
-
-(setq company-bg-color (face-attribute 'default :background))
-
-(custom-set-faces
- '(helm-selection ((t :background "gray25" :distant-foreground "black" :foreground "white smoke")))
- )
-
-(global-set-key (kbd "<S-left>") 'windmove-left)
-(global-set-key (kbd "<S-right>") 'windmove-right)
-(global-set-key (kbd "<S-up>") 'windmove-up)
-(global-set-key (kbd "<S-down>") 'windmove-down)
-
-(after! smartparens
-  (load "~/doom-config/my-smartparens.el")
-  )
-;; (add-to-list 'completion-styles 'flex)
-;; (setq completion-styles '(flex))
-
-;; (setq helm-completion-style 'helm-fuzzy)
 
 ;; Put some Doom defaults back to normal
 (global-set-key (kbd "C-_") 'undo)
 (global-set-key (kbd "C-a") 'beginning-of-line)
-
-(global-visual-line-mode)
 
 (after! helm
   ;; Helm buffer sort order is crazy without this; see
