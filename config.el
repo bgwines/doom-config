@@ -138,8 +138,20 @@
 ;;(set-face-attribute hl-line-face nil :underline t)
 
 ;; moving a line
-(global-set-key (kbd "M-<up>") 'move-text-line-up)
-(global-set-key (kbd "M-<down>") 'move-text-line-down)
+(defun move-line-up ()
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+(global-set-key (kbd "M-<up>") 'move-line-up)
+(global-set-key (kbd "M-<down>") 'move-line-down)
 
 ;; spaces, not tabs
 (setq-default indent-tabs-mode nil)
@@ -150,13 +162,6 @@
 ;; When M-q formatting a comment, only use one space instead of two
 ;; after a period.
 (set-variable 'sentence-end-double-space nil)
-
-;; auto-complete layer (company mode) UI
-(custom-set-faces
- '(company-tooltip-common
-   ((t (:inherit company-tooltip :weight bold :underline nil))))
- '(company-tooltip-common-selection
-   ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
 
 ;; window pane resizing
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
