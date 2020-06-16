@@ -1,4 +1,5 @@
 
+
 (package! whole-line-or-region)
 (package! afternoon-theme)
 (package! helm-ag)
@@ -8,3 +9,9 @@
 (package! w3m)
 (package! zoom-window)
 (package! undo-tree)
+(package! protobuf-mode)
+(package! fastnav)
+(package! git-link)
+(package! backward-forward)
+(package! hl-line)
+;;(mode! auto-dim-other-buffers)

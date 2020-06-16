@@ -1,10 +1,14 @@
 
-;;;;; misc ;;;;;
+;;;;;;;;;;
+;; misc ;;
+;;;;;;;;;;
 
 (global-set-key (kbd "M-?") 'help-command)
 (global-set-key (kbd "<tab>") 'indent-according-to-mode)
 
-;;;;; buffers ;;;;;
+;;;;;;;;;;;;;
+;; buffers ;;
+;;;;;;;;;;;;;
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 ;;(setq ibuffer-saved-filter-groups
@@ -28,16 +32,31 @@
 (after! ibuffer
   (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-forward-filter-group))
 
-;; windmove
+;; splitting panes (same commands as tmux)
 (when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
-(global-set-key (kbd "C-x <up>") 'windmove-up)
-(global-set-key (kbd "C-x <down>") 'windmove-down)
-(global-set-key (kbd "C-x <right>") 'windmove-right)
-(global-set-key (kbd "C-x <left>") 'windmove-left)
+(global-set-key (kbd "C-<up>") 'windmove-up)
+(global-set-key (kbd "C-<down>") 'windmove-down)
+(global-set-key (kbd "C-<right>") 'windmove-right)
+(global-set-key (kbd "C-<left>") 'windmove-left)
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
 (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "S-C-<down>") 'shrink-window)
+(global-set-key (kbd "S-C-<up>") 'enlarge-window)
 
- ;;;;; editing ;;;;;
+(global-set-key (kbd "C-x |") 'split-window-right)
+(global-set-key (kbd "C-x -") 'split-window-below)
+(global-set-key (kbd "C-x y") 'delete-window)
+
+;;;;;;;;;;;
+;; magit ;;
+;;;;;;;;;;;
+
+(global-set-key (kbd "C-c g s") 'magit-status)
+(global-set-key (kbd "C-c g b") 'magit-blame)
+
+;;;;;;;;;;;;;
+;; editing ;;
+;;;;;;;;;;;;;
 
 ;; undo
 (global-set-key (kbd "M-_") 'undo-tree-redo)
@@ -51,11 +70,17 @@
                           finally return name)))
 
 ;; cursor navigation
-;; (this doesn't work)
-;;(global-set-key (kbd "C--") 'xref-pop-marker-stack)
+(backward-forward-mode t)
+;;(global-set-key (kbd "C-<left>") 'pop-tag-mark)
+;;(global-set-key (kbd "C-<right>") 'pop-tag-mark)
+;;(define-key smartparens-mode-map (kbd "C-<left>") 'pop-tag-mark)
+;;(define-key smartparens-mode-map (kbd "C-<right>") 'pop-tag-mark)
 
 ;; jump to start of line
 (global-set-key (kbd "C-'") 'back-to-indentation)
+
+;; move cursor to top and bottom of window, set to M-l for symmetry with C-l
+(global-set-key (kbd "M-l") 'move-to-window-line-top-bottom)
 
 ;; something-to-char
 (defvaralias 'lazy-highlight-face 'isearch-lazy-highlight) ;; NOT sure why
@@ -72,9 +97,8 @@
                          (forward-char)
                          (point))))
 (global-set-key (kbd "M-;") 'zap-backwards-to-char)
-;; these two are broken
-;;(global-set-key (kbd "M-:") 'fastnav-mark-to-char-backward)
-;;(global-set-key (kbd "M-Z") 'fastnav-mark-to-char-forward)
+(global-set-key (kbd "M-:") 'fastnav-mark-to-char-backward)
+(global-set-key (kbd "M-Z") 'fastnav-mark-to-char-forward)
 (global-set-key (kbd "M-z") 'zap-up-to-char)
 
 ;; comment out region/line
@@ -88,13 +112,19 @@
 (global-set-key (kbd "M-u") 'mc/mark-previous-like-this)
 (global-set-key (kbd "M-h") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(setq mc/always-repeat-command t)
+(setq mc/always-run-for-all t)
 
 ;; expand-region
 (global-set-key (kbd "M-a") 'er/contract-region)
 (global-set-key (kbd "M-s") 'er/expand-region)
 
+;; join-line
+(global-set-key (kbd "C-j") 'join-line)
 
-;;;;; deletion ;;;;;
+;;;;;;;;;;;;;;
+;; deletion ;;
+;;;;;;;;;;;;;;
 ;; backwards
 (global-set-key (kbd "C-i") 'delete-backward-char)
 (global-set-key (kbd "M-i") 'subword-backward-kill)
@@ -139,7 +169,9 @@
 ;; Always add newline at end of file.
 (setq require-final-newline t)
 
-;;;;; cosmetics ;;;;;
+;;;;;;;;;;;;;;;
+;; cosmetics ;;
+;;;;;;;;;;;;;;;
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -156,31 +188,73 @@
                       (buffer-face-set '(:background "#333"))))))
   (buffer-face-set 'default))
 (add-hook 'buffer-list-update-hook 'highlight-selected-window)
+;;(add-hook 'after-init-hook (lambda ()
+;;  (when (fboundp 'auto-dim-other-buffers-mode)
+;;    (auto-dim-other-buffers-mode t))))
+
+(after! company
+ (setq company-bg-color (face-attribute 'default :background))
+
+ (custom-set-faces
+  '(company-preview-common ((t (:background "#21e824bc35b0"))))
+  '(company-scrollbar-bg ((t (:background "#2bd12f784561"))))
+  '(company-scrollbar-fg ((t (:background "#21e824bc35b0"))))
+  '(company-tooltip ((t (:inherit default :background "#1bf61e4b2c46"))))
+  '(company-tooltip-annotation ((t (:foreground "deep sky blue"))))
+  '(company-tooltip-annotation-selection ((t (:inherit company-tooltip-annotation :foreground "deep sky blue" :weight bold))))
+  '(company-tooltip-common ((t (:inherit font-lock-constant-face))))
+  '(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+  )
+ )
+(after! helm
+ ;; Default green selection color is hideous
+ (custom-set-faces
+  '(helm-selection ((t :background "gray25" :distant-foreground "black" :foreground "white smoke")))
+  )
+ )
 
 ;; cursor
 (setq-default cursor-type 'bar)
-;;(set-face-background hl-line-face "#333333")
-;;(set-face-attribute hl-line-face nil :underline t)
-
-;; window pane resizing
-(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
-(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
-(global-set-key (kbd "S-C-<down>") 'shrink-window)
-(global-set-key (kbd "S-C-<up>") 'enlarge-window)
+(after! hl-line
+  (set-face-background hl-line-face "#333333")
+  (set-face-attribute hl-line-face nil :underline t))
 
 ;; When M-q formatting a comment, only use one space instead of two
 ;; after a period.
 (set-variable 'sentence-end-double-space nil)
 
 ;; 80 char limit
-(add-hook 'c++-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
-(add-hook 'java-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{101\\}" 'hi-yellow)))
-(add-hook 'js-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
-(add-hook 'jsx-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
-(add-hook 'protobuf-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
-(add-hook 'python-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow)))
+(after! c++
+  (add-hook 'c++-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
+(after! java
+  (add-hook 'java-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{101\\}" 'hi-yellow))))
+(after! js
+  (add-hook 'js-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
+(after! jsx
+  (add-hook 'jsx-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
+(after! protobuf
+  (add-hook 'protobuf-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
+(after! python
+  (add-hook 'python-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
 
-;;;;; Projectile / grepping ;;;;;
+;;;;;;;;;;
+;; Helm ;;
+;;;;;;;;;;
+
+(after! helm
+  ;; Helm buffer sort order is crazy without this; see
+  ;; https://github.com/emacs-helm/helm/issues/1492
+  (defun helm-buffers-sort-transformer@donot-sort (_ candidates _) candidates)
+  (advice-add 'helm-buffers-sort-transformer :around 'helm-buffers-sort-transformer@donot-sort)
+  )
+
+;;;;;;;;;;;;;;;;
+;; Projectile ;;
+;;;;;;;;;;;;;;;;
+
+;; helm-swoop
+(global-set-key (kbd "C-M-s") 'helm-swoop)
+(setq helm-swoop-use-line-number-face nil)
 
 ;; projectile-helm-ag
 (defun projectile-helm-ag (arg)
@@ -216,19 +290,20 @@
 (setq projectile-indexing-method 'native)
 
 ;; dumb-jump
-(setq dumb-jump-default-project "~/quip")
-(global-set-key (kbd "M-.") 'dumb-jump-go)
-(setq dumb-jump-force-searcher 'ag)
+;;(setq dumb-jump-default-project "~/quip")
+;;(global-set-key (kbd "M-.") 'dumb-jump-go)
+;;(setq dumb-jump-force-searcher 'ag)
 
 ;; Makes duplicate files show up as application.py|api instead of the <2>.
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'post-forward)
+(setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
 ;; follow symlinks
 (setq-default vs-follow-symlinks t)
 (setq vc-follow-symlinks t)
 
-;;;;; saving ;;;;;
+;;;;;;;;;;;;
+;; saving ;;
+;;;;;;;;;;;;
 
 ;; Automatically revert all buffers when files change on disk, e.g.
 ;; after a git pull, git rebase, or python autoimports
@@ -254,7 +329,16 @@
 (defadvice windmove-right (before other-window-now activate)
   (when buffer-file-name (save-buffer)))
 
-;;;;; assorted ;;;;;
+;;;;;;;;;;;;;;
+;; assorted ;;
+;;;;;;;;;;;;;;
+
+;; yapf (don't auto-perform this upon save since it locks up emacs for a sec)
+(defun yapf-current-buffer ()
+  (interactive)
+  (shell-command-to-string
+   (format "~/quip/bin/yapf --inplace %s" buffer-file-name)))
+(global-set-key (kbd "C-M-y") 'yapf-current-buffer)
 
 ;; rename-file
 (defun rename-file-and-buffer (new-name)
@@ -272,30 +356,32 @@
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
 
-;;;;; modes ;;;;;
+;;;;;;;;;;;
+;; modes ;;
+;;;;;;;;;;;
 
 (global-subword-mode)
 (global-visual-line-mode)
 (global-undo-tree-mode)
 
-;;;;; smartparens ;;;;;
+;;;;;;;;;;;;;;;;;
+;; smartparens ;;
+;;;;;;;;;;;;;;;;;
 
 (after! smartparens
   (load "~/doom-config/my-smartparens.el")
   )
 
+;;;;;;;;;;;;;;;
+;; yasnippet ;;
+;;;;;;;;;;;;;;;
+
+(after! yasnippet
+  (yas-load-directory "~/.emacs.d/private/snippets")
+)
+
 ;; -----------------
 ;; Tom's stuff below
 ;; -----------------
 
-;; helm-swoop
-(global-set-key (kbd "C-c o") 'helm-swoop)
-
 (setq doom-modeline-buffer-file-name-style 'truncat?rre-with-project)
-
-(after! helm
-  ;; Helm buffer sort order is crazy without this; see
-  ;; https://github.com/emacs-helm/helm/issues/1492
-  (defun helm-buffers-sort-transformer@donot-sort (_ candidates _) candidates)
-  (advice-add 'helm-buffers-sort-transformer :around 'helm-buffers-sort-transformer@donot-sort)
-  )
