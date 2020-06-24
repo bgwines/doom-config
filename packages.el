@@ -4,7 +4,6 @@
 (package! afternoon-theme)
 (package! helm-ag)
 (package! iflipb)
-(package! auto-highlight-symbol)
 (package! helm-swoop)
 (package! w3m)
 (package! zoom-window)
@@ -14,5 +13,8 @@
 (package! git-link)
 (package! backward-forward)
 (package! hl-line)
+;; ahs
+(package! auto-highlight-symbol)
 (package! iedit)
+(package! symbol-overlay)
 ;;(mode! auto-dim-other-buffers)

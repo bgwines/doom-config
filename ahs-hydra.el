@@ -1,6 +1,7 @@
 ;;; ~/doom-config/ahs-hydra.el -*- lexical-binding: t; -*-
 
 (defhydra hydra-auto-symbol-highlight (global-map "<f2>")
+  "The AHS Hydra"
   ("n" quick-ahs-forward "next")
   ("N" ahs-backward "previous")
   ("p" quick-ahs-backward "previous")
@@ -8,15 +9,27 @@
 ;;  ("D" ahs-backward-definition "previous definition")
 ;;  ("r" ahs-change-range "change range")
 ;;  ("R" ahs-back-to-start "reset")
-  ;; problem: loses highlights in some areas after a few iterations
+  ;; TODO: loses highlights in some areas after a few iterations
   ("z" (progn (recenter-top-bottom) (ahs)) "recenter")
   ("e" ahs-to-iedit "iedit")
-;;  ("s" swoop "swoop")
-;;  ("b" buffers "buffers")
-;;  ("b" buffers "buffers")
-;;  ("f" files "files")
-;;  ("/" project "project")
-  ("q" nil :exit t))
+  ("s" helm-swoop-region-or-symbol "swoop")
+;;   ("b":    spacemacs/helm-buffers-smart-do-search-region-or-symbol "buffers")
+;;   ("f":    spacemacs/helm-files-smart-do-search-region-or-symbol "files")
+;;   ("/":    spacemacs/helm-project-smart-do-search-region-or-symbol "project")
+  ("q" nil "cancel"))
+
+;; taken from https://github.com/syl20bnr/spacemacs/pull/4332/files
+(defun helm-swoop-region-or-symbol ()
+  "Call `helm-swoop' with default input."
+  (interactive)
+  (let ((helm-swoop-pre-input-function
+         (lambda ()
+           (if (region-active-p)
+               (buffer-substring-no-properties (region-beginning)
+                                               (region-end))
+             (let ((thing (thing-at-point 'symbol t)))
+               (if thing thing ""))))))
+    (call-interactively 'helm-swoop)))
 
 (defun ahs ()
   "Highlight the symbol under point with `auto-highlight-symbol'."
@@ -38,7 +51,7 @@
   (interactive)
   (quick-ahs-move nil))
 
-;; problem: only cycles around within visible segment of buffer
+;; TODO: only cycles around within visible segment of buffer
 (defun quick-ahs-move (forward)
   "Go to the next occurrence of symbol under point with `auto-highlight-symbol'"
   (if forward
