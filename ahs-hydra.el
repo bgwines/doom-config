@@ -5,10 +5,11 @@
   ("n" quick-ahs-forward "next")
   ("N" ahs-backward "previous")
   ("p" quick-ahs-backward "previous")
-;;  ("d" ahs-forward-definition "next definition")
-;;  ("D" ahs-backward-definition "previous definition")
-;;  ("r" ahs-change-range "change range")
-;;  ("R" ahs-back-to-start "reset")
+  ("d" ahs-forward-definition "next definition")
+  ("D" ahs-backward-definition "previous definition")
+  ;; the message doesn't stick; the hydra overrides it?
+  ("r" ahs-change-range "change range")
+  ("R" ahs-back-to-start "reset")
   ;; TODO: loses highlights in some areas after a few iterations
   ("z" (progn (recenter-top-bottom) (ahs)) "recenter")
   ("e" ahs-to-iedit "iedit")
@@ -51,7 +52,7 @@
   (interactive)
   (quick-ahs-move nil))
 
-;; TODO: only cycles around within visible segment of buffer
+;; TODO: default to WHOLE BUFFER (green range) (this is probably a global variable)
 (defun quick-ahs-move (forward)
   "Go to the next occurrence of symbol under point with `auto-highlight-symbol'"
   (if forward
