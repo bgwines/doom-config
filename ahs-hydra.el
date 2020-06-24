@@ -1,23 +1,30 @@
 ;;; ~/doom-config/ahs-hydra.el -*- lexical-binding: t; -*-
 
-(defhydra hydra-auto-symbol-highlight (global-map "<f2>")
-  "The AHS Hydra"
-  ("n" quick-ahs-forward "next")
-  ("N" ahs-backward "previous")
-  ("p" quick-ahs-backward "previous")
-  ("d" ahs-forward-definition "next definition")
-  ("D" ahs-backward-definition "previous definition")
-  ;; the message doesn't stick; the hydra overrides it?
-  ("r" ahs-change-range "change range")
-  ("R" ahs-back-to-start "reset")
+;; TODO search column
+(defhydra hydra-auto-symbol-highlight (global-map "<f2>" :hint nil)
+  "
+^Navigation^       ^Search^            ^AHS Hydra^        ^Other^
+^^^^^^^^-----------------------------------------------------------------
+_n_: next          _s_: swoop          _r_: range         _e_: iedit
+_N_/_p_: previous    _b_: buffer         _R_: reset
+_d_: prevdef       _f_: files          _q_: cancel
+_D_: nextdef       _/_: project
+"
+  ("n" quick-ahs-forward)
+  ("N" quick-ahs-backward)
+  ("p" quick-ahs-backward)
+  ("d" ahs-forward-definition)
+  ("D" ahs-backward-definition)
+  ("r" ahs-change-range)
+  ("R" ahs-back-to-start)
   ;; TODO: loses highlights in some areas after a few iterations
-  ("z" (progn (recenter-top-bottom) (ahs)) "recenter")
-  ("e" ahs-to-iedit "iedit")
-  ("s" helm-swoop-region-or-symbol "swoop")
-;;   ("b":    spacemacs/helm-buffers-smart-do-search-region-or-symbol "buffers")
-;;   ("f":    spacemacs/helm-files-smart-do-search-region-or-symbol "files")
-;;   ("/":    spacemacs/helm-project-smart-do-search-region-or-symbol "project")
-  ("q" nil "cancel"))
+  ("z" (progn (recenter-top-bottom) (ahs)))
+  ("e" ahs-to-iedit :color blue)  ;; TODO: use :exit t instead of color
+  ("s" helm-swoop-region-or-symbol :color blue)
+  ("b": nil :color blue) ;;spacemacs/helm-buffers-smart-do-search-region-or-symbol
+  ("f": nil :color blue) ;;spacemacs/helm-files-smart-do-search-region-or-symbol
+  ("/": nil :color blue) ;;spacemacs/helm-project-smart-do-search-region-or-symbol
+  ("q" nil))
 
 ;; taken from https://github.com/syl20bnr/spacemacs/pull/4332/files
 (defun helm-swoop-region-or-symbol ()
