@@ -1,54 +1,5 @@
 ;;; ~/doom-config/ahs-hydra.el -*- lexical-binding: t; -*-
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 (defhydra hydra-auto-symbol-highlight (global-map "<f2>")
   ("n" quick-ahs-forward "next")
   ("N" ahs-backward "previous")
@@ -57,8 +8,9 @@
 ;;  ("D" ahs-backward-definition "previous definition")
 ;;  ("r" ahs-change-range "change range")
 ;;  ("R" ahs-back-to-start "reset")
+  ;; problem: loses highlights in some areas after a few iterations
   ("z" (progn (recenter-top-bottom) (ahs)) "recenter")
-;;  ("e" ahs-to-iedit "iedit")
+  ("e" ahs-to-iedit "iedit")
 ;;  ("s" swoop "swoop")
 ;;  ("b" buffers "buffers")
 ;;  ("b" buffers "buffers")
@@ -99,7 +51,14 @@
       (hydra-auto-symbol-highlight/body)
       (ahs-backward))))
 
-
+(defun ahs-to-iedit ()
+  "Trigger iedit from ahs."
+  (interactive)
+   (progn
+    (iedit-mode)
+    (iedit-restrict-region (ahs-current-plugin-prop 'start)
+                           (ahs-current-plugin-prop 'end)))
+   (t (ahs-edit-mode t)))
 
 
 

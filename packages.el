@@ -14,4 +14,5 @@
 (package! git-link)
 (package! backward-forward)
 (package! hl-line)
+(package! iedit)
 ;;(mode! auto-dim-other-buffers)
