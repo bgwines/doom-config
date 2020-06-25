@@ -5,6 +5,8 @@
 
 (global-set-key (kbd "M-?") 'help-command)
 (global-set-key (kbd "<tab>") 'indent-according-to-mode)
+(global-set-key (kbd "C-c C-l") 'eval-buffer)
+(global-set-key (kbd "C-M-x") 'eval-defun)
 
 ;;;;;;;;;;;;;
 ;; buffers ;;
@@ -277,7 +279,7 @@
     ))
 ;; which of these is better? The former, right?
 (global-set-key (kbd "C-x C-r") 'projectile-helm-ag)
-(global-set-key (kbd "M-g M-r") 'helm-projectile-aXg)
+(global-set-key (kbd "M-g M-r") 'helm-projectile-ag)
 
 ;; (global-set-key (kbd "C-t") 'projectile-find-file) (Tom uses this)
 (global-set-key (kbd "C-t") 'helm-projectile-find-file)
