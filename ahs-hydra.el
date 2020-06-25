@@ -1,30 +1,71 @@
 ;;; ~/doom-config/ahs-hydra.el -*- lexical-binding: t; -*-
 
-;; TODO search column
-(defhydra hydra-auto-symbol-highlight (global-map "<f2>" :hint nil)
+(defhydra hydra-auto-symbol-highlight (:hint nil)
   "
-^Navigation^       ^Search^            ^AHS Hydra^        ^Other^
+Welcome, my dude
+----------------
+
+^Navigation^       ^Search^          ^AHS Hydra^        ^Magic^
 ^^^^^^^^-----------------------------------------------------------------
-_n_: next          _s_: swoop          _r_: range         _e_: iedit
-_N_/_p_: previous    _b_: buffer         _R_: reset
-_d_: prevdef       _f_: files          _q_: cancel
-_D_: nextdef       _/_: project
+_n_: next          ^ ^               _r_: range         _e_: iedit
+_N_/_p_: previous    ^ ^               _R_: reset         _s_: swoop
+_d_: prevdef       _g_: project      _q_: cancel
+_D_: nextdef
 "
+  ;; TODO: show i/n
   ("n" quick-ahs-forward)
   ("N" quick-ahs-backward)
   ("p" quick-ahs-backward)
   ("d" ahs-forward-definition)
   ("D" ahs-backward-definition)
+  ;; TODO: show what the range is in the hydra description
   ("r" ahs-change-range)
   ("R" ahs-back-to-start)
-  ;; TODO: loses highlights in some areas after a few iterations
   ("z" (progn (recenter-top-bottom) (ahs)))
-  ("e" ahs-to-iedit :color blue)  ;; TODO: use :exit t instead of color
-  ("s" helm-swoop-region-or-symbol :color blue)
-  ("b": nil :color blue) ;;spacemacs/helm-buffers-smart-do-search-region-or-symbol
-  ("f": nil :color blue) ;;spacemacs/helm-files-smart-do-search-region-or-symbol
-  ("/": nil :color blue) ;;spacemacs/helm-project-smart-do-search-region-or-symbol
+  ("e" ahs-to-iedit :exit t)
+  ("s" helm-swoop-region-or-symbol :exit t)
+  ("g" helm-projectile-ag-the-selection :exit t)
   ("q" nil))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (spacemacs/defer-until-after-user-config                                    ;;
+;;  '(lambda ()                                                                ;;
+;;     (eval                                                                   ;;
+;;      (append                                                                ;;
+;;       '(defhydra ,func                                                      ;;
+;;          (nil nil                                                           ;;
+;;           :hint ,hint                                                       ;;
+;;           :columns ,columns                                                 ;;
+;;           :foreign-keys ,foreign-keys                                       ;;
+;;           :body-pre ,entry-sexp                                             ;;
+;;           :before-exit ,exit-sexp)                                          ;;
+;;          ,doc)                                                              ;;
+;;       (spacemacs//transient-state-adjust-bindings                           ;;
+;;        ',bindings ',remove-bindings ',add-bindings)))                       ;;
+;;     (when ,title                                                            ;;
+;;       (let ((guide (concat "[" (propertize "KEY" 'face 'hydra-face-blue)    ;;
+;;                            "] exits state  ["                               ;;
+;;                            (if ',foreign-keys                               ;;
+;;                                (propertize "KEY" 'face 'hydra-face-pink)    ;;
+;;                              (propertize "KEY" 'face 'hydra-face-red))      ;;
+;;                            "] will not exit")))                             ;;
+;;         ;; (add-face-text-property 0 (length guide) '(:height 0.9) t guide) ;;
+;;         (add-face-text-property 0 (length guide) 'italic t guide)           ;;
+;;         (setq ,hint-var                                                     ;;
+;;               (list 'concat                                                 ;;
+;;                     (when dotspacemacs-show-transient-state-title           ;;
+;;                       (concat                                               ;;
+;;                        (propertize                                          ;;
+;;                         ,title                                              ;;
+;;                         'face 'spacemacs-transient-state-title-face)        ;;
+;;                        (if ,hint-doc-p " " "\n"))) ,hint-var                ;;
+;;                        ',dyn-hint                                           ;;
+;;                        (when dotspacemacs-show-transient-state-color-guide  ;;
+;;                          (concat "\n" guide))))))                           ;;
+;;     ,@bindkeys)))))                                                         ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
 
 ;; taken from https://github.com/syl20bnr/spacemacs/pull/4332/files
 (defun helm-swoop-region-or-symbol ()
@@ -79,29 +120,16 @@ _D_: nextdef       _/_: project
     (iedit-mode)
     (iedit-restrict-region (ahs-current-plugin-prop 'start)
                            (ahs-current-plugin-prop 'end)))
-   (t (ahs-edit-mode t)))
+   (ahs-edit-mode t))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-(defun aoeu ()
-  (message "'sup"))
+(defun helm-projectile-ag-the-selection ()
+  "helm-projectile-ag the selection"
+  (interactive)
+  (let* ((bounds (bounds-of-thing-at-point 'symbol))
+       (beg (car bounds))
+       (end (cdr bounds))
+       (face (when bounds
+               (get-text-property beg 'face)))
+       (symbol (when bounds
+                 (buffer-substring beg end)))))
+  (when symbol (helm-projectile-ag symbol)))

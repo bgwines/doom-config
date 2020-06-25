@@ -107,6 +107,8 @@
 ;; avy
 (global-set-key (kbd "C-;") 'avy-goto-char)
 (global-set-key (kbd "C-:") 'avy-goto-char-2)
+;; remap default from C-; so we don't get the warning
+(setq-default iedit-toggle-key-default nil)
 
 ;; multiple cursors
 (global-set-key (kbd "M-u") 'mc/mark-previous-like-this)
@@ -275,7 +277,7 @@
     ))
 ;; which of these is better? The former, right?
 (global-set-key (kbd "C-x C-r") 'projectile-helm-ag)
-(global-set-key (kbd "M-g M-r") 'helm-projectile-ag)
+(global-set-key (kbd "M-g M-r") 'helm-projectile-aXg)
 
 ;; (global-set-key (kbd "C-t") 'projectile-find-file) (Tom uses this)
 (global-set-key (kbd "C-t") 'helm-projectile-find-file)
