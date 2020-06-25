@@ -1,8 +1,8 @@
 ;;; ~/doom-config/ahs-hydra.el -*- lexical-binding: t; -*-
 
 (defhydra hydra-auto-symbol-highlight (:hint nil)
-  "
-Welcome, my dude
+  (format "
+Welcome, my %s
 ----------------
 
 ^Navigation^       ^Search^          ^AHS Hydra^        ^Magic^
@@ -11,7 +11,7 @@ _n_: next          ^ ^               _r_: range         _e_: iedit
 _N_/_p_: previous    ^ ^               _R_: reset         _s_: swoop
 _d_: prevdef       _g_: project      _q_: cancel
 _D_: nextdef
-"
+" "dude")
   ;; TODO: show i/n
   ("n" quick-ahs-forward)
   ("N" quick-ahs-backward)
@@ -125,6 +125,7 @@ _D_: nextdef
 (defun helm-projectile-ag-the-selection ()
   "helm-projectile-ag the selection"
   (interactive)
+  ;; stole this from auto-highlight-symbol.el, in the ahs-highlight-p function
   (let* ((bounds (bounds-of-thing-at-point 'symbol))
        (beg (car bounds))
        (end (cdr bounds))
@@ -132,4 +133,6 @@ _D_: nextdef
                (get-text-property beg 'face)))
        (symbol (when bounds
                  (buffer-substring beg end)))))
-  (when symbol (helm-projectile-ag symbol)))
+  (message symbol)
+  ;;(when symbol (helm-projectile-ag symbol)))
+)
