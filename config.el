@@ -4,9 +4,22 @@
 ;;;;;;;;;;
 
 (global-set-key (kbd "M-?") 'help-command)
-(global-set-key (kbd "<tab>") 'indent-according-to-mode)
+(global-set-key (kbd "<tab>") 'indent-for-tab-command)
+(after! iedit-mode
+  (define-key iedit-mode-keymap (kbd "<tab>") 'indent-for-tab-command))
 (global-set-key (kbd "C-c C-l") 'eval-buffer)
 (global-set-key (kbd "C-M-x") 'eval-defun)
+
+;;;;;;;;;;;;;;;
+;; AHS Hydra ;;
+;;;;;;;;;;;;;;;
+
+(setq ahs-loaded nil)
+(after! auto-highlight-symbol-hydra
+  (setq ahs-loaded t)
+  (global-set-key (kbd "M-t") 'ahs)
+  (setq-default ahs-case-fold-search nil)
+  (setq-default ahs-default-range 'ahs-range-whole-buffer))
 
 ;;;;;;;;;;;;;
 ;; buffers ;;
@@ -250,7 +263,16 @@
   ;; https://github.com/emacs-helm/helm/issues/1492
   (defun helm-buffers-sort-transformer@donot-sort (_ candidates _) candidates)
   (advice-add 'helm-buffers-sort-transformer :around 'helm-buffers-sort-transformer@donot-sort)
+
+  (defun helm-find-files-in-root ()
+    "Open helm-find-files in the current project root."
+    (interactive)
+    (helm-find-files-1 (doom-project-root))
+    )
+  (global-set-key (kbd "C-c C-f") 'helm-find-files-in-root)
   )
+
+
 
 ;;;;;;;;;;;;;;;;
 ;; Projectile ;;
@@ -389,3 +411,23 @@
 ;; -----------------
 
 (setq doom-modeline-buffer-file-name-style 'truncat?rre-with-project)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages (quote (auto-highlight-symbol-hydra))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-preview-common ((t (:background "#21e824bc35b0"))))
+ '(company-scrollbar-bg ((t (:background "#2bd12f784561"))))
+ '(company-scrollbar-fg ((t (:background "#21e824bc35b0"))))
+ '(company-tooltip ((t (:inherit default :background "#1bf61e4b2c46"))))
+ '(company-tooltip-annotation ((t (:foreground "deep sky blue"))))
+ '(company-tooltip-annotation-selection ((t (:inherit company-tooltip-annotation :foreground "deep sky blue" :weight bold))))
+ '(company-tooltip-common ((t (:inherit font-lock-constant-face))))
+ '(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+ '(helm-selection ((t :background "gray25" :distant-foreground "black" :foreground "white smoke"))))

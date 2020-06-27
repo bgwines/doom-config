@@ -15,4 +15,7 @@
 (package! auto-highlight-symbol)
 (package! iedit)
 (package! symbol-overlay)
+(package! auto-highlight-symbol-hydra :recipe
+  '(:host github
+    :repo "bgwines/auto-highlight-symbol-hydra"))
 ;;(mode! auto-dim-other-buffers)
