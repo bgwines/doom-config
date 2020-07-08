@@ -11,11 +11,13 @@
 (package! git-link)
 (package! backward-forward)
 (package! hl-line)
-;; ahs
-(package! auto-highlight-symbol)
+(package! doom-modeline)
+
+;; package dev
+(package! gif-screencast)
+(package! package-lint)
+
 (package! iedit)
-(package! symbol-overlay)
-(package! auto-highlight-symbol-hydra :recipe
-  '(:host github
-    :repo "bgwines/auto-highlight-symbol-hydra"))
-;;(mode! auto-dim-other-buffers)
+;;(package! symbol-navigation-hydra :recipe
+;;  '(:host github
+;;    :repo "bgwines/symbol-navigation-hydra"))

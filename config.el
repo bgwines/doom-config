@@ -11,15 +11,15 @@
 (global-set-key (kbd "C-M-x") 'eval-defun)
 
 ;;;;;;;;;;;;;;;
-;; AHS Hydra ;;
+;; SN Hydra ;;
 ;;;;;;;;;;;;;;;
 
-(setq ahs-loaded nil)
-(after! auto-highlight-symbol-hydra
-  (setq ahs-loaded t)
-  (global-set-key (kbd "M-t") 'ahs)
+(require 'symbol-navigation-hydra)
+(after! symbol-navigation-hydra
+  (global-set-key (kbd "M-t") 'symbol-navigation-hydra-engage-hydra)
   (setq-default ahs-case-fold-search nil)
   (setq-default ahs-default-range 'ahs-range-whole-buffer))
+(setq-default ahs-idle-interval 999999999.0)
 
 ;;;;;;;;;;;;;
 ;; buffers ;;
@@ -153,6 +153,9 @@
   (setq kill-ring-yank-pointer (cdr kill-ring-yank-pointer))
   )
 
+(after! markdown-mode
+  (define-key markdown-mode-map (kbd "C-i") 'delete-backward-char))
+
 (after! helm-files
   (define-key helm-map (kbd "C-i") 'delete-backward-char)
   (define-key helm-map (kbd "M-i") 'subword-backward-delete)
@@ -194,20 +197,8 @@
 
 ;; (setq doom-theme 'doom-tomorrow-night)
 (setq doom-theme 'afternoon)
-(setq doom-font (font-spec :family "Source Code Pro" :size 18))
+(setq doom-font (font-spec :family "Source Code Pro" :size 22))
 
-;; dim inactive panes
-(defun highlight-selected-window ()
-  "Highlight selected window with a different background color."
-  (walk-windows (lambda (w)
-                  (unless (eq w (selected-window))
-                    (with-current-buffer (window-buffer w)
-                      (buffer-face-set '(:background "#333"))))))
-  (buffer-face-set 'default))
-(add-hook 'buffer-list-update-hook 'highlight-selected-window)
-;;(add-hook 'after-init-hook (lambda ()
-;;  (when (fboundp 'auto-dim-other-buffers-mode)
-;;    (auto-dim-other-buffers-mode t))))
 
 (after! company
  (setq company-bg-color (face-attribute 'default :background))
@@ -404,19 +395,38 @@
 
 (after! yasnippet
   (yas-load-directory "~/.emacs.d/private/snippets")
-)
+  )
+
+;;;;;;;;;;;;;
+;; spotify ;;
+;;;;;;;;;;;;;
+
+(add-to-list 'load-path "/Users/bwines/doom-manually-cloned-packages/spotify.el")
+;;(require 'spotify)
+(after! spotify
+  (setq spotify-oauth2-client-secret "d6af04f7574a4ec3b9c4b66b504fb806")
+  (setq spotify-oauth2-client-id "8e2e1e959e54496eb6c7a623402f49b1")
+  ;;(setq spotify-transport 'connect)
+  (setq spotify-player-status-truncate-length 20) ; default: 15
+  (setq spotify-player-status-playing-text "♬")
+  (setq spotify-player-status-paused-text "‖")
+  (setq spotify-player-status-format "[%p %a - %t]")
+  (global-spotify-remote-mode))
+
+;; -----------------
+;; Splash screen
+;; -----------------
+
 
 ;; -----------------
 ;; Tom's stuff below
 ;; -----------------
 
 (setq doom-modeline-buffer-file-name-style 'truncat?rre-with-project)
-(custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (auto-highlight-symbol-hydra))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -431,3 +441,9 @@
  '(company-tooltip-common ((t (:inherit font-lock-constant-face))))
  '(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
  '(helm-selection ((t :background "gray25" :distant-foreground "black" :foreground "white smoke"))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages (quote (symbol-navigation-hydra))))
