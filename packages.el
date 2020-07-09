@@ -18,6 +18,6 @@
 (package! package-lint)
 
 (package! iedit)
-;;(package! symbol-navigation-hydra :recipe
-;;  '(:host github
-;;    :repo "bgwines/symbol-navigation-hydra"))
+(package! symbol-navigation-hydra :recipe
+  '(:host github
+    :repo "bgwines/symbol-navigation-hydra"))

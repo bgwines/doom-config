@@ -140,6 +140,16 @@
 (global-set-key (kbd "C-j") 'join-line)
 
 ;;;;;;;;;;;;;;
+;; flycheck ;;
+;;;;;;;;;;;;;;
+
+(defun disable-flycheck-mode ()
+  (interactive)
+  (flycheck-mode -1))
+(add-hook 'python-mode-hook 'disable-flycheck-mode)
+(add-hook 'elisp-mode-hook 'disable-flycheck-mode)
+
+;;;;;;;;;;;;;;
 ;; deletion ;;
 ;;;;;;;;;;;;;;
 ;; backwards
