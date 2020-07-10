@@ -12,11 +12,7 @@
 (package! backward-forward)
 (package! hl-line)
 (package! doom-modeline)
-
-;; package dev
-(package! gif-screencast)
 (package! package-lint)
-
 (package! iedit)
 (package! symbol-navigation-hydra :recipe
   '(:host github

@@ -321,12 +321,23 @@
 ;;(global-set-key (kbd "M-.") 'dumb-jump-go)
 ;;(setq dumb-jump-force-searcher 'ag)
 
-;; Makes duplicate files show up as application.py|api instead of the <2>.
-(setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
-
 ;; follow symlinks
 (setq-default vs-follow-symlinks t)
 (setq vc-follow-symlinks t)
+
+;;;;;;;;;;;;;;;;;;;
+;; doom modeline ;;
+;;;;;;;;;;;;;;;;;;;
+
+;; Makes duplicate files show up as application.py|api instead of the <2>.
+(setq doom-modeline-buffer-file-name-style 'relative-to-project)
+(setq doom-modeline-major-mode-icon t)
+(setq doom-modeline-major-mode-color-icon t)
+(setq doom-modeline-icon (display-graphic-p))
+(setq doom-modeline-buffer-state-icon t)
+(setq doom-modeline-buffer-modification-icon t)
+(setq doom-modeline-minor-modes nil)
+(setq doom-modeline-buffer-encoding nil)
 
 ;;;;;;;;;;;;
 ;; saving ;;
@@ -404,8 +415,10 @@
 ;;;;;;;;;;;;;;;
 
 (after! yasnippet
-  (yas-load-directory "~/.emacs.d/private/snippets")
-  )
+  (setq yas-snippet-dirs
+        '("~/.emacs.d/private/snippets"))
+  (add-hook 'prog-mode-hook #'yas-minor-mode)
+  (add-hook 'prog-mode-hook #'yas-reload-all))
 
 ;;;;;;;;;;;;;
 ;; spotify ;;
@@ -423,16 +436,6 @@
   (setq spotify-player-status-format "[%p %a - %t]")
   (global-spotify-remote-mode))
 
-;; -----------------
-;; Splash screen
-;; -----------------
-
-
-;; -----------------
-;; Tom's stuff below
-;; -----------------
-
-(setq doom-modeline-buffer-file-name-style 'truncat?rre-with-project)
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
