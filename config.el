@@ -26,23 +26,7 @@
 ;;;;;;;;;;;;;
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-;;(setq ibuffer-saved-filter-groups
-;;      '(("home"
-;;         ("emacs" (or (filename . ".emacs.d")
-;;                      (filename . ".spacemacs")))
-;;                      (filename . "doom-emacs")))
-;;         ("quip/services" (filename . "quip/services"))
-;;         ("quip/templates" (filename . "quip/templates"))
-;;         ("quip/lib" (filename . "quip/lib"))
-;;         ("quip/data" (filename . "quip/data"))
-;;         ("quip/proto" (filename . "quip/proto"))
-;;         ("Magit" (name . "\*magit"))
-;;         ("Help" (or (name . "\*Help\*")
-;;                     (name . "\*Apropos\*")
-;;                     (name . "\*info\*"))))))
-;;(add-hook 'ibuffer-mode-hook
-;;          '(lambda ()
-;;             (ibuffer-switch-to-saved-filter-groups "home")))
+
 ;; remapping lost keystrokes
 (after! ibuffer
   (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-forward-filter-group))
@@ -225,12 +209,6 @@
   '(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
   )
  )
-(after! helm
- ;; Default green selection color is hideous
- (custom-set-faces
-  '(helm-selection ((t :background "gray25" :distant-foreground "black" :foreground "white smoke")))
-  )
- )
 
 ;; cursor
 (setq-default cursor-type 'bar)
@@ -261,20 +239,32 @@
 ;;;;;;;;;;
 
 (after! helm
-  ;; Helm buffer sort order is crazy without this; see
-  ;; https://github.com/emacs-helm/helm/issues/1492
-  (defun helm-buffers-sort-transformer@donot-sort (_ candidates _) candidates)
-  (advice-add 'helm-buffers-sort-transformer :around 'helm-buffers-sort-transformer@donot-sort)
+ ;; Default green selection color is hideous
+ (custom-set-faces
+  '(helm-selection ((t :background "gray25" :distant-foreground "black" :foreground "white smoke"))))
 
-  (defun helm-find-files-in-root ()
-    "Open helm-find-files in the current project root."
-    (interactive)
-    (helm-find-files-1 (doom-project-root))
-    )
-  (global-set-key (kbd "C-c C-f") 'helm-find-files-in-root)
-  )
+ ;; Helm buffer sort order is crazy without this; see
+ ;; https://github.com/emacs-helm/helm/issues/1492
+ (defun helm-buffers-sort-transformer@donot-sort (_ candidates _) candidates)
+ (advice-add 'helm-buffers-sort-transformer :around 'helm-buffers-sort-transformer@donot-sort)
 
+ (defun helm-find-files-in-root ()
+   "Open helm-find-files in the current project root."
+   (interactive)
+   (helm-find-files-1 (doom-project-root))
+   )
+ (global-set-key (kbd "C-c C-f") 'helm-find-files-in-root)
 
+ (defun helm-buffer-ace-window (buffer)
+   "Use ‘ace-window’ to select a window to display BUFFER."
+   (ace-select-window)
+   (switch-to-buffer buffer))
+
+ ;; https://emacs.stackexchange.com/questions/17072/open-file-in-a-specific-window
+ ;;(add-to-list 'helm-type-buffer-actions
+ ;;             '("Switch to buffer in Ace window ‘C-c C-e'" . helm-buffer-ace-window)
+ ;;             :append)
+ )
 
 ;;;;;;;;;;;;;;;;
 ;; Projectile ;;

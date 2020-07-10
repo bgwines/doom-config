@@ -1,10 +1,7 @@
 (package! whole-line-or-region)
 (package! afternoon-theme)
 (package! helm-ag)
-(package! iflipb)
 (package! helm-swoop)
-(package! w3m)
-(package! zoom-window)
 (package! undo-tree)
 (package! protobuf-mode)
 (package! fastnav)
@@ -14,6 +11,7 @@
 (package! doom-modeline)
 (package! package-lint)
 (package! iedit)
+(package! ace-window)
 (package! symbol-navigation-hydra :recipe
   '(:host github
     :repo "bgwines/symbol-navigation-hydra"))
