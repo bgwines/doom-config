@@ -239,10 +239,11 @@
 ;;;;;;;;;;;;;;;;
 
 (after! ace-window
-  ;; TODO configure size of letters?
   (global-set-key (kbd "M-o") 'ace-window)
   (setq aw-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
   (setq aw-dispatch-always t)
+  (custom-set-faces
+   '(aw-leading-char-face ((t :height 3.5 :foreground "deep sky blue" :inherit 'aw-leading-char-face))))
   (setq ace-window-display-mode t))
 
 ;; https://emacs.stackexchange.com/questions/17072/open-file-in-a-specific-window
@@ -485,6 +486,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(aw-leading-char-face ((t :height 3.5 :foreground "deep sky blue" :inherit (quote aw-leading-char-face))))
  '(company-preview-common ((t (:background "#21e824bc35b0"))))
  '(company-scrollbar-bg ((t (:background "#2bd12f784561"))))
  '(company-scrollbar-fg ((t (:background "#21e824bc35b0"))))
