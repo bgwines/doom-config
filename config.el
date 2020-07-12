@@ -234,9 +234,75 @@
 (after! python
   (add-hook 'python-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
 
+;;;;;;;;;;;;;;;;
+;; ace-window ;;
+;;;;;;;;;;;;;;;;
+
+(after! ace-window
+  ;; TODO configure size of letters?
+  (global-set-key (kbd "M-o") 'ace-window)
+  (setq aw-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
+  (setq aw-dispatch-always t)
+  (setq ace-window-display-mode t))
+
+;; https://emacs.stackexchange.com/questions/17072/open-file-in-a-specific-window
+(defun helm-buffer-run-ace-window ()
+ (interactive)
+ (with-helm-alive-p
+   (helm-exit-and-execute-action 'helm-buffer-ace-window)))
+
+(defun helm-file-run-ace-window ()
+ (interactive)
+ (with-helm-alive-p
+   (helm-exit-and-execute-action 'helm-file-ace-window)))
+
+(defun helm-file-ace-window (file)
+  "Use ‘ace-window’ to select a window to display FILE."
+  (ace-select-window)
+  (find-file file))
+
+(defun helm-buffer-ace-window (buffer)
+  "Use ‘ace-window’ to select a window to display BUFFER."
+  (ace-select-window)
+  (find-file buffer))
+
+(after! helm-buffers
+ (add-to-list 'helm-type-buffer-actions
+              '("Switch to buffer in Ace window ‘C-c C-e'" . helm-buffer-ace-window)
+              :append)
+ (define-key helm-buffer-map (kbd "C-c C-e") #'helm-buffer-run-ace-window)
+ )
+
+(after! helm-projectile
+ (add-to-list 'helm-projectile-file-actions
+              '("Switch to buffer in Ace window ‘C-c C-e'" . helm-buffer-ace-window)
+              :append)
+ (define-key helm-projectile-find-file-map (kbd "C-c C-e") #'helm-buffer-run-ace-window)
+ )
+
+(after! helm-files
+  (add-to-list 'helm-find-files-actions
+               '("Switch to file in Ace window ‘C-c C-e'" . helm-file-ace-window)
+               :append)
+  (add-to-list 'helm-type-file-actions
+               '("Switch to file in Ace window ‘C-c C-e'" . helm-file-ace-window)
+               :append)
+
+  (define-key helm-map (kbd "C-c C-e") #'helm-file-run-ace-window)
+  (define-key help-mode-map (kbd "C-c C-e") #'helm-file-run-ace-window)
+  (define-key helm-find-files-map (kbd "C-c C-e") #'helm-file-run-ace-window)
+ )
+
 ;;;;;;;;;;
 ;; Helm ;;
 ;;;;;;;;;;
+
+(defun helm-find-files-in-root ()
+  "Open helm-find-files in the current project root."
+  (interactive)
+  (helm-find-files (doom-project-root))
+  )
+(global-set-key (kbd "C-c C-f") 'helm-find-files-in-root)
 
 (after! helm
  ;; Default green selection color is hideous
@@ -247,23 +313,6 @@
  ;; https://github.com/emacs-helm/helm/issues/1492
  (defun helm-buffers-sort-transformer@donot-sort (_ candidates _) candidates)
  (advice-add 'helm-buffers-sort-transformer :around 'helm-buffers-sort-transformer@donot-sort)
-
- (defun helm-find-files-in-root ()
-   "Open helm-find-files in the current project root."
-   (interactive)
-   (helm-find-files-1 (doom-project-root))
-   )
- (global-set-key (kbd "C-c C-f") 'helm-find-files-in-root)
-
- (defun helm-buffer-ace-window (buffer)
-   "Use ‘ace-window’ to select a window to display BUFFER."
-   (ace-select-window)
-   (switch-to-buffer buffer))
-
- ;; https://emacs.stackexchange.com/questions/17072/open-file-in-a-specific-window
- ;;(add-to-list 'helm-type-buffer-actions
- ;;             '("Switch to buffer in Ace window ‘C-c C-e'" . helm-buffer-ace-window)
- ;;             :append)
  )
 
 ;;;;;;;;;;;;;;;;
