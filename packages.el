@@ -12,6 +12,7 @@
 (package! package-lint)
 (package! iedit)
 (package! ace-window)
+(package! hydra)
 (package! symbol-navigation-hydra :recipe
   '(:host github
     :repo "bgwines/symbol-navigation-hydra"))

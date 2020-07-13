@@ -31,20 +31,43 @@
 (after! ibuffer
   (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-forward-filter-group))
 
-;; splitting panes (same commands as tmux)
 (when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
-(global-set-key (kbd "C-<up>") 'windmove-up)
-(global-set-key (kbd "C-<down>") 'windmove-down)
-(global-set-key (kbd "C-<right>") 'windmove-right)
-(global-set-key (kbd "C-<left>") 'windmove-left)
-(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
-(global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
-(global-set-key (kbd "S-C-<down>") 'shrink-window)
-(global-set-key (kbd "S-C-<up>") 'enlarge-window)
 
-(global-set-key (kbd "C-x |") 'split-window-right)
-(global-set-key (kbd "C-x -") 'split-window-below)
-(global-set-key (kbd "C-x y") 'delete-window)
+(after! hydra
+  (defun window-hydra-header ()
+    (propertize "Window Hydra" 'face `(:box t :weight bold)))
+
+  (defhydra window-hydra (:hint nil)
+  "
+%s(window-hydra-header)
+^^Split           ^^Switch     ^^Resize     ^^Close
+^^----------------^^-----------^^-----------^^----------
+_|_: vertical     _f_: →       _F_: →       _y_: current
+_-_: horizontal   _b_: ←       _B_: ←       _o_: others
+^ ^               _p_: ↑       _P_: ↑
+^ ^               _n_: ↓       _N_: ↓       _q_: (quit)
+^ ^               _a_: any     _0_: balance
+"
+    ("|" split-window-right :exit t)
+    ("-" split-window-below :exit t)
+
+    ("P" hydra-move-splitter-up)
+    ("N" hydra-move-splitter-down)
+    ("F" hydra-move-splitter-right)
+    ("B" hydra-move-splitter-left)
+    ("0" balance-windows)
+
+    ("y" delete-window :exit t)
+    ("o" delete-other-windows :exit t)
+
+    ("p" windmove-up :exit t)
+    ("n" windmove-down :exit t)
+    ("f" windmove-right :exit t)
+    ("b" windmove-left :exit t)
+    ("a" ace-window :exit t)
+
+    ("q" nil :exit t)))
+(global-set-key (kbd "C-,") 'window-hydra/body)
 
 ;;;;;;;;;;;
 ;; magit ;;
@@ -118,7 +141,6 @@
 (setq mc/always-run-for-all t)
 
 ;; expand-region
-(global-set-key (kbd "M-a") 'er/contract-region)
 (global-set-key (kbd "M-s") 'er/expand-region)
 
 ;; join-line
@@ -233,6 +255,22 @@
   (add-hook 'protobuf-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
 (after! python
   (add-hook 'python-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
+
+;; font size
+(defun text-zoom-header ()
+  (propertize "Text Zoom" 'face `(:box t :weight bold)))
+
+(defhydra text-zoom (:hint nil)
+  "
+%s(text-zoom-header) _h_: +  _u_: -  _0_: reset  _q_: quit
+"
+  ("h" doom/increase-font-size)
+  ("+" doom/increase-font-size)
+  ("u" doom/decrease-font-size)
+  ("-" doom/decrease-font-size)
+  ("0" doom/reset-font-size)
+  ("q" nil :exit t))
+(global-set-key (kbd "C-=") 'text-zoom/body)
 
 ;;;;;;;;;;;;;;;;
 ;; ace-window ;;
