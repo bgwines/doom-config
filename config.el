@@ -292,6 +292,13 @@
   (define-key helm-map (kbd "C-c C-e") #'helm-file-run-ace-window)
   (define-key help-mode-map (kbd "C-c C-e") #'helm-file-run-ace-window)
   (define-key helm-find-files-map (kbd "C-c C-e") #'helm-file-run-ace-window)
+  )
+
+(after! helm
+  (setq-default helm-recentf-fuzzy-match nil)
+ )
+(after! helm-files
+  (setq-default helm-recentf-fuzzy-match nil)
  )
 
 ;;;;;;;;;;
@@ -501,4 +508,5 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(helm-recentf-fuzzy-match nil)
  '(package-selected-packages (quote (symbol-navigation-hydra))))
