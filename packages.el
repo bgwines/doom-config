@@ -12,6 +12,7 @@
 (package! package-lint)
 (package! iedit)
 (package! ace-window)
+(package! move-text)
 (package! hydra)
 (package! symbol-navigation-hydra :recipe
   '(:host github
