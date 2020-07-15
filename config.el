@@ -40,13 +40,13 @@
   (defhydra window-hydra (:hint nil)
   "
 %s(window-hydra-header)
-^^Split           ^^Switch     ^^Resize     ^^Close
-^^----------------^^-----------^^-----------^^----------
-_|_: vertical     _f_: →       _F_: →       _y_: current
-_-_: horizontal   _b_: ←       _B_: ←       _o_: others
-^ ^               _p_: ↑       _P_: ↑
-^ ^               _n_: ↓       _N_: ↓       _q_: (quit)
-^ ^               _a_: any     _0_: balance
+^ ^   Split     | ^ ^   Switch^ ^    | ^ ^ Resize   | ^ ^Close
+^-^-------------|-^-^---------^-^----|-^-^----------|-^-^---------
+_|_: vertical   | _a_: any    _f_: → | _F_: →       | _y_: current
+_-_: horizontal | _s_: swap   _b_: ← | _B_: ←       | _o_: others
+^ ^             | ^ ^         _p_: ↑ | _P_: ↑       |
+^ ^             | ^ ^         _n_: ↓ | _N_: ↓       |
+^ ^             | ^ ^         ^ ^    | _0_: balance | _q_: (quit)
 "
     ("|" split-window-right :exit t)
     ("-" split-window-below :exit t)
@@ -65,13 +65,14 @@ _-_: horizontal   _b_: ←       _B_: ←       _o_: others
     ("f" windmove-right :exit t)
     ("b" windmove-left :exit t)
     ("a" ace-window :exit t)
+    ("s" ace-swap-window :exit t)
 
     ("q" nil :exit t)))
 (global-set-key (kbd "C-,") 'window-hydra/body)
 
-;;;;;;;;;;;
+;;;;;;;;;
 ;; git ;;
-;;;;;;;;;;;
+;;;;;;;;;
 
 (global-set-key (kbd "C-c g s") 'magit-status)
 (global-set-key (kbd "C-c g b") 'magit-blame)
