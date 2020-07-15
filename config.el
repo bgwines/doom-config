@@ -70,11 +70,13 @@ _-_: horizontal   _b_: ←       _B_: ←       _o_: others
 (global-set-key (kbd "C-,") 'window-hydra/body)
 
 ;;;;;;;;;;;
-;; magit ;;
+;; git ;;
 ;;;;;;;;;;;
 
 (global-set-key (kbd "C-c g s") 'magit-status)
 (global-set-key (kbd "C-c g b") 'magit-blame)
+(after! git-link
+  (setq-default git-link-use-commit t))
 
 ;;;;;;;;;;;;;
 ;; editing ;;
@@ -92,6 +94,15 @@ _-_: horizontal   _b_: ←       _B_: ←       _o_: others
                           finally return name)))
 
 ;; cursor navigation
+
+(defhydra hydra-goto-line (goto-map ""
+                           :pre (linum-mode 1)
+                           :post (linum-mode -1))
+  "goto-line"
+  ("g" goto-line "go" :exit t)
+  ("m" set-mark-command "mark" :bind nil)
+  ("q" nil "quit"))
+(global-set-key (kbd "M-g M-g") 'hydra-goto-line/body)
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
                                      :color pink
@@ -415,16 +426,13 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (define-key helm-find-files-map (kbd "C-c C-e") #'helm-file-run-ace-window)
   )
 
-(after! helm
-  (setq-default helm-recentf-fuzzy-match nil)
- )
-(after! helm-files
-  (setq-default helm-recentf-fuzzy-match nil)
- )
-
 ;;;;;;;;;;
 ;; Helm ;;
 ;;;;;;;;;;
+
+(after! (:and helm helm-buffers)
+ (setq! helm-buffers-sort-fn #'helm-fuzzy-matching-sort-fn-preserve-ties-order)
+ )
 
 (defun helm-find-files-in-root ()
   "Open helm-find-files in the current project root."
@@ -484,11 +492,6 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (setq projectile-project-search-path '("~/quip"))
 (setq projectile-enable-caching t)
 (setq projectile-indexing-method 'native)
-
-;; dumb-jump
-;;(setq dumb-jump-default-project "~/quip")
-;;(global-set-key (kbd "M-.") 'dumb-jump-go)
-;;(setq dumb-jump-force-searcher 'ag)
 
 ;; follow symlinks
 (setq-default vs-follow-symlinks t)
@@ -568,16 +571,9 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ;;;;;;;;;;;
 
 (global-subword-mode)
-(global-visual-line-mode)
 (global-undo-tree-mode)
 
-;;;;;;;;;;;;;;;;;
-;; smartparens ;;
-;;;;;;;;;;;;;;;;;
-
-(after! smartparens
-  (load "~/doom-config/my-smartparens.el")
-  )
+(global-display-line-numbers-mode -1)
 
 ;;;;;;;;;;;;;;;
 ;; yasnippet ;;
@@ -629,5 +625,4 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(helm-recentf-fuzzy-match nil)
  '(package-selected-packages (quote (symbol-navigation-hydra))))
