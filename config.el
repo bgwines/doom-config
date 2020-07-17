@@ -96,11 +96,16 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←       | _o_: others
 
 ;; cursor navigation
 
+(defun goto-line-and-recenter ()
+  (interactive)
+  (call-interactively #'goto-line)
+  (recenter-top-bottom))
+
 (defhydra hydra-goto-line (goto-map ""
                            :pre (linum-mode 1)
                            :post (linum-mode -1))
   "goto-line"
-  ("g" goto-line "go" :exit t)
+  ("g" goto-line-and-recenter "go" :exit t)
   ("m" set-mark-command "mark" :bind nil)
   ("q" nil "quit"))
 (global-set-key (kbd "M-g M-g") 'hydra-goto-line/body)
@@ -511,6 +516,8 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (setq doom-modeline-buffer-modification-icon t)
 (setq doom-modeline-minor-modes nil)
 (setq doom-modeline-buffer-encoding nil)
+(global-anzu-mode +1)
+
 
 ;;;;;;;;;;;;
 ;; saving ;;
