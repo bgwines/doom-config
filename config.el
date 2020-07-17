@@ -466,7 +466,8 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (global-set-key (kbd "C-M-s") 'helm-swoop)
 (setq helm-swoop-use-line-number-face nil)
 
-;; projectile-helm-ag
+;; this is not smart enough beacuse it needs to be aware of the .projectile
+;; file. TODO: make it a wrapper around the other one :)
 (defun projectile-helm-ag (arg)
   "Run helm-do-ag relative to the project root.  Or, with prefix arg ARG, relative to the current directory."
   (interactive "P")
