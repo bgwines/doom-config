@@ -106,6 +106,7 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←       | _o_: others
                            :post (linum-mode -1))
   "goto-line"
   ("g" goto-line-and-recenter "go" :exit t)
+  ("RET" goto-line-and-recenter "go" :exit t)
   ("m" set-mark-command "mark" :bind nil)
   ("q" nil "quit"))
 (global-set-key (kbd "M-g M-g") 'hydra-goto-line/body)
@@ -220,8 +221,8 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
                          (forward-char)
                          (point))))
 (global-set-key (kbd "M-;") 'zap-backwards-to-char)
-(global-set-key (kbd "M-:") 'fastnav-mark-to-char-backward)
-(global-set-key (kbd "M-Z") 'fastnav-mark-to-char-forward)
+(global-set-key (kbd "M-:") 'fastnav-mark-up-to-char-backward)
+(global-set-key (kbd "M-Z") 'fastnav-mark-up-to-char-forward)
 (global-set-key (kbd "M-z") 'zap-up-to-char)
 
 ;; comment out region/line
@@ -582,7 +583,12 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (global-subword-mode)
 (global-undo-tree-mode)
 
+;; Disable line numbers
 (global-display-line-numbers-mode -1)
+(setq display-line-numbers-type nil)
+
+;; line wrap
+(global-visual-line-mode t)
 
 ;;;;;;;;;;;;;;;
 ;; yasnippet ;;

@@ -4,7 +4,7 @@
           :branch "f3cd86f171c4903a3a92812c3de36a95a0bd6fcd"))
 (package! helm :pin "f3cd86f171c4903a3a92812c3de36a95a0bd6fcd")
 
-(package! whole-line-or-region)
+(package! whole-line-or-region)  ;; what is this?
 (package! afternoon-theme)
 (package! helm-ag)
 (package! helm-swoop)
@@ -21,6 +21,4 @@
 (package! move-text)
 (package! anzu)
 (package! hydra)
-(package! symbol-navigation-hydra :recipe
-  '(:host github
-    :repo "bgwines/symbol-navigation-hydra"))
+(package! symbol-navigation-hydra)
