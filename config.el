@@ -20,6 +20,9 @@
   (setq-default ahs-case-fold-search nil)
   (setq-default ahs-default-range 'ahs-range-whole-buffer))
 (setq-default ahs-idle-interval 999999999.0)
+(setq-default ahs-inhibit-face-list (delete 'font-lock-doc-string-face ahs-inhibit-face-list))
+(setq-default ahs-inhibit-face-list (delete 'font-lock-string-face ahs-inhibit-face-list))
+(setq-default ahs-inhibit-face-list (delete 'font-lock-doc-face ahs-inhibit-face-list))
 
 ;;;;;;;;;;;;;
 ;; buffers ;;
@@ -40,13 +43,12 @@
   (defhydra window-hydra (:hint nil)
   "
 %s(window-hydra-header)
-^ ^   Split     | ^ ^   Switch^ ^    | ^ ^ Resize   | ^ ^Close
-^-^-------------|-^-^---------^-^----|-^-^----------|-^-^---------
-_|_: vertical   | _a_: any    _f_: → | _F_: →       | _y_: current
-_-_: horizontal | _s_: swap   _b_: ← | _B_: ←       | _o_: others
-^ ^             | ^ ^         _p_: ↑ | _P_: ↑       |
-^ ^             | ^ ^         _n_: ↓ | _N_: ↓       |
-^ ^             | ^ ^         ^ ^    | _0_: balance | _q_: (quit)
+^ ^   Split     | ^ ^   Switch^ ^    | ^ ^    Resize   ^ ^   | ^ ^Close
+^-^-------------|-^-^---------^-^----|-^-^------^-^----------|-^-^-^-^------------
+_|_: vertical   | _a_: any    _f_: → | _F_: →   _0_: balance | _y_: current
+_-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_: other
+^ ^             | ^ ^         _p_: ↑ | _P_: ↑   ^ ^          | _O_/_1_: all others
+^ ^             | ^ ^         _n_: ↓ | _N_: ↓   ^ ^          | _q_: (quit)
 "
     ("|" split-window-right :exit t)
     ("-" split-window-below :exit t)
@@ -58,7 +60,9 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←       | _o_: others
     ("0" balance-windows)
 
     ("y" delete-window :exit t)
-    ("o" delete-other-windows :exit t)
+    ("o" ace-delete-window :exit t)
+    ("O" delete-other-windows :exit t)
+    ("1" delete-other-windows :exit t)
 
     ("p" windmove-up :exit t)
     ("n" windmove-down :exit t)
@@ -354,8 +358,9 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (add-hook 'jsx-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
 (after! protobuf
   (add-hook 'protobuf-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
-(after! python
-  (add-hook 'python-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
+;; yapf takes care of this
+;;(after! python
+;;  (add-hook 'python-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
 
 ;; font size
 (defun text-zoom-header ()
@@ -404,28 +409,32 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (defun helm-buffer-ace-window (buffer)
   "Use ‘ace-window’ to select a window to display BUFFER."
   (ace-select-window)
-  (find-file buffer))
+  (helm-window-show-buffers (list buffer)))
 
 (after! helm-buffers
  (add-to-list 'helm-type-buffer-actions
-              '("Switch to buffer in Ace window ‘C-c C-e'" . helm-buffer-ace-window)
+              '("Switch to buffer in Ace window ‘C-c C-e'" .
+                helm-buffer-ace-window)
               :append)
  (define-key helm-buffer-map (kbd "C-c C-e") #'helm-buffer-run-ace-window)
  )
 
 (after! helm-projectile
  (add-to-list 'helm-projectile-file-actions
-              '("Switch to buffer in Ace window ‘C-c C-e'" . helm-buffer-ace-window)
+              '("Switch to buffer in Ace window ‘C-c C-e'" .
+                helm-buffer-ace-window)
               :append)
  (define-key helm-projectile-find-file-map (kbd "C-c C-e") #'helm-buffer-run-ace-window)
  )
 
 (after! helm-files
   (add-to-list 'helm-find-files-actions
-               '("Switch to file in Ace window ‘C-c C-e'" . helm-file-ace-window)
+               '("Switch to file in Ace window ‘C-c C-e'" .
+                 helm-file-ace-window)
                :append)
   (add-to-list 'helm-type-file-actions
-               '("Switch to file in Ace window ‘C-c C-e'" . helm-file-ace-window)
+               '("Switch to file in Ace window ‘C-c C-e'" .
+                 helm-file-ace-window)
                :append)
 
   (define-key helm-map (kbd "C-c C-e") #'helm-file-run-ace-window)
@@ -467,8 +476,6 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (global-set-key (kbd "C-M-s") 'helm-swoop)
 (setq helm-swoop-use-line-number-face nil)
 
-;; this is not smart enough beacuse it needs to be aware of the .projectile
-;; file. TODO: make it a wrapper around the other one :)
 (defun projectile-helm-ag (arg)
   "Run helm-do-ag relative to the project root.  Or, with prefix arg ARG, relative to the current directory."
   (interactive "P")
@@ -485,9 +492,48 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
         )
     (helm-do-ag (projectile-project-root))
     ))
-;; which of these is better? The former, right?
-(global-set-key (kbd "C-x C-r") 'projectile-helm-ag)
-(global-set-key (kbd "M-g M-r") 'helm-projectile-ag)
+
+(after! helm-ag
+  (defun proooojectile-helm-ag-dired-aware (arg)
+    "Run `helm-do-ag' relative to the project root, searching for `QUERY'.
+
+  Or, with prefix arg `ARG', search relative to the current directory."
+    (interactive "P")
+    (message "normal mode")
+    (if arg
+        (progn
+          ;; Have to kill the prefix arg so it doesn't get forwarded
+          ;; and screw up helm-do-ag
+          (set-variable 'current-prefix-arg nil)
+          (if dired-directory
+              (helm-do-ag dired-directory)
+            (helm-do-ag nil)
+            )
+          )
+      (helm-do-ag nil)))
+
+  (defun helm-projectile-ag-scoped (directory &optional options)
+    (interactive "D")
+    (if (projectile-project-p)
+        (let* ((grep-find-ignored-files
+                (cl-union (projectile-ignored-files-rel) grep-find-ignored-files))
+               (grep-find-ignored-directories
+                (cl-union (projectile-ignored-directories-rel) grep-find-ignored-directories))
+               (ignored (mapconcat (lambda (i)
+                                     (concat "--ignore " i))
+                                   (append grep-find-ignored-files
+                                           grep-find-ignored-directories
+                                           (cadr (projectile-parse-dirconfig-file)))
+                                   " "))
+               (helm-ag-base-command (concat helm-ag-base-command " " ignored " " options))
+               (current-prefix-arg nil)
+               (ag-directory (if directory directory (projectile-project-root))))
+          (helm-do-ag ag-directory (car (projectile-parse-dirconfig-file)) nil))
+      (error "You're not in a project"))
+    )
+  )
+
+(global-set-key (kbd "M-g M-r") 'proooojectile-helm-ag-dired-aware)
 
 ;; (global-set-key (kbd "C-t") 'projectile-find-file) (Tom uses this)
 (global-set-key (kbd "C-t") 'helm-projectile-find-file)
@@ -640,4 +686,4 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (symbol-navigation-hydra))))
+ '(package-selected-packages (quote (helm-swoop symbol-navigation-hydra))))
