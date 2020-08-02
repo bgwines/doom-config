@@ -93,10 +93,17 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_: other
 (defun new-scratch ()
   "open up a guaranteed new scratch buffer"
   (interactive)
-  (switch-to-buffer (loop for num from 0
-                          for name = (format "scratch-%03i" num)
-                          while (get-buffer name)
-                          finally return name)))
+  (defun format-name (num)
+    (format "scratch-%03i" num))
+
+  (defun get-new-scratch-buffer-name ()
+    (interactive)
+    (setq num 0)
+    (while (get-buffer (format-name num))
+      (setq num (+ 1 num)))
+    (format-name num))
+
+  (switch-to-buffer (get-new-scratch-buffer-name)))
 
 ;; cursor navigation
 
@@ -406,6 +413,10 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (ace-select-window)
   (find-file file))
 
+(setq helm-ace-command
+      "RET")
+;; "C-c C-e")
+
 (defun helm-buffer-ace-window (buffer)
   "Use ‘ace-window’ to select a window to display BUFFER."
   (ace-select-window)
@@ -413,33 +424,33 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 (after! helm-buffers
  (add-to-list 'helm-type-buffer-actions
-              '("Switch to buffer in Ace window ‘C-c C-e'" .
+              '((format "Switch to buffer in Ace window ‘%s'" helm-ace-command) .
                 helm-buffer-ace-window)
               :append)
- (define-key helm-buffer-map (kbd "C-c C-e") #'helm-buffer-run-ace-window)
+ (define-key helm-buffer-map (kbd helm-ace-command) #'helm-buffer-run-ace-window)
  )
 
 (after! helm-projectile
  (add-to-list 'helm-projectile-file-actions
-              '("Switch to buffer in Ace window ‘C-c C-e'" .
-                helm-buffer-ace-window)
+              '((format "Switch to file in Ace window ‘%s'" helm-ace-command) .
+                helm-file-ace-window)
               :append)
- (define-key helm-projectile-find-file-map (kbd "C-c C-e") #'helm-buffer-run-ace-window)
+ (define-key helm-projectile-find-file-map (kbd helm-ace-command) #'helm-file-run-ace-window)
  )
 
 (after! helm-files
   (add-to-list 'helm-find-files-actions
-               '("Switch to file in Ace window ‘C-c C-e'" .
+               '((format "Switch to file in Ace window ‘%s'" helm-ace-command) .
                  helm-file-ace-window)
                :append)
   (add-to-list 'helm-type-file-actions
-               '("Switch to file in Ace window ‘C-c C-e'" .
+               '((format "Switch to file in Ace window ‘%s'" helm-ace-command) .
                  helm-file-ace-window)
                :append)
 
-  (define-key helm-map (kbd "C-c C-e") #'helm-file-run-ace-window)
-  (define-key help-mode-map (kbd "C-c C-e") #'helm-file-run-ace-window)
-  (define-key helm-find-files-map (kbd "C-c C-e") #'helm-file-run-ace-window)
+  (define-key helm-map (kbd helm-ace-command) #'helm-file-run-ace-window)
+  (define-key help-mode-map (kbd helm-ace-command) #'helm-file-run-ace-window)
+  (define-key helm-find-files-map (kbd helm-ace-command) #'helm-file-run-ace-window)
   )
 
 ;;;;;;;;;;
@@ -686,4 +697,5 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(recentf-auto-cleanup 60)
  '(package-selected-packages (quote (helm-swoop symbol-navigation-hydra))))
