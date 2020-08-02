@@ -232,7 +232,7 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
                          (forward-char)
                          (point))))
 (global-set-key (kbd "M-;") 'zap-backwards-to-char)
-(global-set-key (kbd "M-:") 'fastnav-mark-up-to-char-backward)
+(global-set-key (kbd "M-:") 'fastnav-mark-up-to-char-xbackward)
 (global-set-key (kbd "M-Z") 'fastnav-mark-up-to-char-forward)
 (global-set-key (kbd "M-z") 'zap-up-to-char)
 
@@ -410,16 +410,17 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 (defun helm-file-ace-window (file)
   "Use ‘ace-window’ to select a window to display FILE."
-  (ace-select-window)
+  (unless (eq 1 (length (window-list)))
+    (ace-select-window))
   (find-file file))
 
 (setq helm-ace-command
-      "RET")
-;; "C-c C-e")
+      "M-RET")
 
 (defun helm-buffer-ace-window (buffer)
   "Use ‘ace-window’ to select a window to display BUFFER."
-  (ace-select-window)
+  (unless (eq 1 (length (window-list)))
+    (ace-select-window))
   (helm-window-show-buffers (list buffer)))
 
 (after! helm-buffers
