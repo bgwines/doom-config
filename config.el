@@ -286,11 +286,19 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (define-key markdown-mode-map (kbd "C-i") 'delete-backward-char))
 
 (after! helm-files
+  (defun delete-line-no-kill ()
+    (interactive)
+    (delete-region
+     (point)
+     (save-excursion (move-end-of-line 1) (point)))
+    )
+
   (define-key helm-map (kbd "C-i") 'delete-backward-char)
   (define-key helm-map (kbd "M-i") 'subword-backward-delete)
+  (define-key helm-map (kbd "C-k") 'delete-line-no-kill)
   (define-key helm-find-files-map (kbd "C-i") 'delete-backward-char)
   (define-key helm-find-files-map (kbd "M-i") 'subword-backward-delete)
-  (define-key helm-find-files-map (kbd "C-k") 'kill-line-no-fill-kill-ring)
+  (define-key helm-find-files-map (kbd "C-k") 'delete-line-no-kill)
   )
 (after! isearch
   (define-key isearch-mode-map (kbd "C-i") 'isearch-del-char))
@@ -414,8 +422,7 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     (ace-select-window))
   (find-file file))
 
-(setq helm-ace-command
-      "M-RET")
+(setq helm-ace-command "M-RET")
 
 (defun helm-buffer-ace-window (buffer)
   "Use ‘ace-window’ to select a window to display BUFFER."
