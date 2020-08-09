@@ -5,8 +5,6 @@
 
 (global-set-key (kbd "M-?") 'help-command)
 (global-set-key (kbd "<tab>") 'indent-for-tab-command)
-(after! iedit-mode
-  (define-key iedit-mode-keymap (kbd "<tab>") 'indent-for-tab-command))
 (global-set-key (kbd "C-c C-l") 'eval-buffer)
 (global-set-key (kbd "C-M-x") 'eval-defun)
 
@@ -33,8 +31,6 @@
 ;; remapping lost keystrokes
 (after! ibuffer
   (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-forward-filter-group))
-
-(when (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
 
 (after! hydra
   (defun window-hydra-header ()
@@ -121,6 +117,8 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_: other
   ("m" set-mark-command "mark" :bind nil)
   ("q" nil "quit"))
 (global-set-key (kbd "M-g M-g") 'hydra-goto-line/body)
+(global-display-line-numbers-mode -1)
+(setq display-line-numbers-type nil)
 
 (defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
                                      :color pink
@@ -203,7 +201,7 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   ("g" nil))
 (global-set-key (kbd "M-p") 'hydra-smartparens/body)
 
-
+;; jump to previous cursor locations
 (add-hook 'prog-mode-hook #'backward-forward-mode)
 (global-set-key (kbd "C-<left>") 'backward-forward-previous-location)
 (global-set-key (kbd "C-<right>") 'backward-forward-next-location)
@@ -242,8 +240,6 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ;; avy
 (global-set-key (kbd "C-;") 'avy-goto-char)
 (global-set-key (kbd "C-:") 'avy-goto-char-2)
-;; remap default from C-; so we don't get the warning
-(setq-default iedit-toggle-key-default nil)
 
 ;; multiple cursors
 (global-set-key (kbd "M-u") 'mc/mark-previous-like-this)
@@ -296,9 +292,15 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (define-key helm-map (kbd "C-i") 'delete-backward-char)
   (define-key helm-map (kbd "M-i") 'subword-backward-delete)
   (define-key helm-map (kbd "C-k") 'delete-line-no-kill)
+  (define-key helm-map (kbd "TAB") 'helm-ff-RET)
+  (define-key helm-read-file-map (kbd "C-i") 'delete-backward-char)
+  (define-key helm-read-file-map (kbd "M-i") 'subword-backward-delete)
+  (define-key helm-read-file-map (kbd "C-k") 'delete-line-no-kill)
+  (define-key helm-read-file-map (kbd "TAB") 'helm-ff-RET)
   (define-key helm-find-files-map (kbd "C-i") 'delete-backward-char)
   (define-key helm-find-files-map (kbd "M-i") 'subword-backward-delete)
   (define-key helm-find-files-map (kbd "C-k") 'delete-line-no-kill)
+  (define-key helm-find-files-map (kbd "TAB") 'helm-ff-RET)
   )
 (after! isearch
   (define-key isearch-mode-map (kbd "C-i") 'isearch-del-char))
@@ -317,6 +319,7 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (transpose-lines 1)
   (forward-line -1)
   (indent-according-to-mode))
+
 (global-set-key (kbd "M-<up>") 'move-line-up)
 (global-set-key (kbd "M-<down>") 'move-line-down)
 
@@ -335,7 +338,6 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ;; (setq doom-theme 'doom-tomorrow-night)
 (setq doom-theme 'afternoon)
 (setq doom-font (font-spec :family "Source Code Pro" :size 22))
-
 
 (after! company
  (setq company-bg-color (face-attribute 'default :background))
@@ -361,21 +363,6 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ;; When M-q formatting a comment, only use one space instead of two
 ;; after a period.
 (set-variable 'sentence-end-double-space nil)
-
-;; 80 char limit
-(after! c++
-  (add-hook 'c++-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
-(after! java
-  (add-hook 'java-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{101\\}" 'hi-yellow))))
-(after! js
-  (add-hook 'js-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
-(after! jsx
-  (add-hook 'jsx-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
-(after! protobuf
-  (add-hook 'protobuf-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
-;; yapf takes care of this
-;;(after! python
-;;  (add-hook 'python-mode-hook '(lambda () (highlight-lines-matching-regexp ".\\{81\\}" 'hi-yellow))))
 
 ;; font size
 (defun text-zoom-header ()
@@ -513,7 +500,7 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     ))
 
 (after! helm-ag
-  (defun proooojectile-helm-ag-dired-aware (arg)
+  (defun projectile-helm-ag-dired-aware (arg)
     "Run `helm-do-ag' relative to the project root, searching for `QUERY'.
 
   Or, with prefix arg `ARG', search relative to the current directory."
@@ -552,7 +539,7 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     )
   )
 
-(global-set-key (kbd "M-g M-r") 'proooojectile-helm-ag-dired-aware)
+(global-set-key (kbd "M-g M-r") 'projectile-helm-ag-dired-aware)
 
 ;; (global-set-key (kbd "C-t") 'projectile-find-file) (Tom uses this)
 (global-set-key (kbd "C-t") 'helm-projectile-find-file)
@@ -583,8 +570,9 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (setq doom-modeline-buffer-modification-icon t)
 (setq doom-modeline-minor-modes nil)
 (setq doom-modeline-buffer-encoding nil)
-(global-anzu-mode +1)
 
+;; display isearch counts (e.g. currently focused on search result i/n)
+(global-anzu-mode +1)
 
 ;;;;;;;;;;;;
 ;; saving ;;
@@ -645,15 +633,10 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ;; modes ;;
 ;;;;;;;;;;;
 
-(global-subword-mode)
-(global-undo-tree-mode)
-
-;; Disable line numbers
-(global-display-line-numbers-mode -1)
-(setq display-line-numbers-type nil)
-
 ;; line wrap
 (global-visual-line-mode t)
+(global-subword-mode)
+(global-undo-tree-mode)
 
 ;;;;;;;;;;;;;;;
 ;; yasnippet ;;

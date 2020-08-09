@@ -11,7 +11,6 @@
 (package! hl-line)
 (package! doom-modeline)
 (package! package-lint)
-(package! iedit)
 (package! ace-window)
 (package! move-text)
 (package! anzu)
