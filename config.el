@@ -3,6 +3,12 @@
 ;; misc ;;
 ;;;;;;;;;;
 
+(defun ahsrp ()
+  (interactive)
+  (message "%s" (ahs-runnable-plugins)))
+
+(global-set-key (kbd "M-a") 'ahsrp)
+
 (global-set-key (kbd "M-?") 'help-command)
 (global-set-key (kbd "<tab>") 'indent-for-tab-command)
 (global-set-key (kbd "C-c C-l") 'eval-buffer)
@@ -42,7 +48,7 @@
 ^ ^   Split     | ^ ^   Switch^ ^    | ^ ^    Resize   ^ ^   | ^ ^Close
 ^-^-------------|-^-^---------^-^----|-^-^------^-^----------|-^-^-^-^------------
 _|_: vertical   | _a_: any    _f_: → | _F_: →   _0_: balance | _y_: current
-_-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_: other
+_-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_/_k_: other
 ^ ^             | ^ ^         _p_: ↑ | _P_: ↑   ^ ^          | _O_/_1_: all others
 ^ ^             | ^ ^         _n_: ↓ | _N_: ↓   ^ ^          | _q_: (quit)
 "
@@ -57,6 +63,7 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_: other
 
     ("y" delete-window :exit t)
     ("o" ace-delete-window :exit t)
+    ("k" ace-delete-window :exit t)
     ("O" delete-other-windows :exit t)
     ("1" delete-other-windows :exit t)
 
@@ -220,6 +227,17 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     ;; this fixes a thing
     ;; but it definitely fixes something with the next two commands
 
+(defun mark-up-to-char-backward (arg char)
+  (interactive "p\ncMark backwards up to char: ")
+  (if (char-table-p translation-table-for-input)
+      (setq char (or (aref translation-table-for-input char) char)))
+  (set-mark (point))
+  (goto-char (progn
+                         (search-backward (char-to-string char)
+                                         nil nil arg)
+                         (forward-char)
+                         (point))))
+
 (defun zap-backwards-to-char (arg char)
   (interactive "p\ncZap backwards to char: ")
   (if (char-table-p translation-table-for-input)
@@ -230,7 +248,7 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
                          (forward-char)
                          (point))))
 (global-set-key (kbd "M-;") 'zap-backwards-to-char)
-(global-set-key (kbd "M-:") 'fastnav-mark-up-to-char-xbackward)
+(global-set-key (kbd "M-:") 'mark-up-to-char-backward)
 (global-set-key (kbd "M-Z") 'fastnav-mark-up-to-char-forward)
 (global-set-key (kbd "M-z") 'zap-up-to-char)
 
