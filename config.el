@@ -164,14 +164,14 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
  [_f_] forward    [_p_] up        [_l_] slurp      [_U_]   bw unwrap     [_r_] raise   [_E_] emit        [_k_] kill          [_g_] quit
  [_b_] backward   [_P_] bw up     [_L_] barf       [_(__{__[_] wrap (){}[]   [_j_] join    [_o_] convolute   [_K_] bw kill       [_q_] quit"
   ;; Moving
-  ("a" sp-beginning-of-sexp)
-  ("e" sp-end-of-sexp)
-  ("f" sp-forward-sexp)
-  ("b" sp-backward-sexp)
-  ("n" sp-down-sexp)
-  ("N" sp-backward-down-sexp)
-  ("p" sp-up-sexp)
-  ("P" sp-backward-up-sexp)
+  ("a" sp-beginning-of-sexp :exit t)
+  ("e" sp-end-of-sexp :exit t)
+  ("f" sp-forward-sexp :exit t)
+  ("b" sp-backward-sexp :exit t)
+  ("n" sp-down-sexp :exit t)
+  ("N" sp-backward-down-sexp :exit t)
+  ("p" sp-up-sexp :exit t)
+  ("P" sp-backward-up-sexp :exit t)
 
   ;; Slurping & barfing
   ("h" sp-backward-slurp-sexp)
@@ -281,6 +281,9 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (flycheck-mode -1))
 (add-hook 'python-mode-hook 'disable-flycheck-mode)
 (add-hook 'elisp-mode-hook 'disable-flycheck-mode)
+
+(global-flycheck-mode nil)
+(remove-hook 'prog-mode 'flycheck-mode)
 
 ;;;;;;;;;;;;;;
 ;; deletion ;;
@@ -557,7 +560,13 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     )
   )
 
-(global-set-key (kbd "M-g M-r") 'projectile-helm-ag-dired-aware)
+;; this is actually good; use it.
+;;   needs M-RET (ace-window open)
+;;   needs C-i / M-i bindings for its mode map
+;;   C-c C-e (helm-ag-edit) needs an inverse of `occur' (`exclude')
+;;   C-c C-e needs a way to not overwrite an existing buffer
+;;   need to exclude things
+(global-set-key (kbd "M-g M-r") 'projectile-helm-ag)
 
 ;; (global-set-key (kbd "C-t") 'projectile-find-file) (Tom uses this)
 (global-set-key (kbd "C-t") 'helm-projectile-find-file)
@@ -574,6 +583,26 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 ;; follow symlinks
 (setq-default vs-follow-symlinks t)
 (setq vc-follow-symlinks t)
+
+;;;;;;;;;;;;;
+;; bin/grr ;;
+;;;;;;;;;;;;;
+
+(defun grr (query)
+  (interactive "sQuery: ")
+  (grep (format "~/quip/bin/grr %s" query)))
+
+(defun grr-server (query)
+  (interactive "sQuery: ")
+  (grep (format "~/quip/bin/grr-server %s" query)))
+
+(defun grr-proto (query)
+  (interactive "sQuery: ")
+  (grep (format "~/quip/bin/grr-proto %s" query)))
+
+(defun grr-ekm (query)
+  (interactive "sQuery: ")
+  (grep (format "~/quip/bin/grr-ekm %s" query)))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; doom modeline ;;
