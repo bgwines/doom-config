@@ -430,13 +430,29 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     (ace-select-window))
   (find-file file))
 
+(defun helm-nonrelative-file-run-ace-window ()
+ (interactive)
+ (with-helm-alive-p
+   (helm-exit-and-execute-action 'helm-nonrelative-file-ace-window)))
+
+(defun helm-nonrelative-file-ace-window (grep-line)
+  "Use ‘ace-window’ to select a window to display the file in GRR-LINE."
+  (unless (eq 1 (length (window-list)))
+    (ace-select-window))
+  (let* ((prefix "~/quip/")
+         (nonrelative-file (car (split-string grep-line ":")))
+         (file (if (string-prefix-p prefix nonrelative-file)
+                   nonrelative-file
+                 (concat prefix nonrelative-file))))
+    (find-file file)))
+
 (setq helm-ace-command "M-RET")
 
 (defun helm-buffer-ace-window (buffer)
   "Use ‘ace-window’ to select a window to display BUFFER."
   (unless (eq 1 (length (window-list)))
     (ace-select-window))
-  (helm-window-show-buffers (list buffer)))
+    (helm-window-show-buffers (list buffer)))
 
 (after! helm-buffers
  (add-to-list 'helm-type-buffer-actions
@@ -561,12 +577,22 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   )
 
 ;; this is actually good; use it.
-;;   needs M-RET (ace-window open)
-;;   needs C-i / M-i bindings for its mode map
 ;;   C-c C-e (helm-ag-edit) needs an inverse of `occur' (`exclude')
 ;;   C-c C-e needs a way to not overwrite an existing buffer
-;;   need to exclude things
+;;   needs to exclude files
+;;     (test with `M-g M-r any_digit' -- it should not include ext/)
 (global-set-key (kbd "M-g M-r") 'projectile-helm-ag)
+(after! helm-mode
+  (define-key helm-ag-map (kbd "C-i") 'delete-backward-char)
+  (define-key helm-ag-map (kbd "M-i") 'subword-backward-delete)
+  (define-key helm-ag-map (kbd "C-k") 'delete-line-no-kill)
+  (add-to-list 'helm-ag--actions
+              '((format "Switch to file in Ace window ‘%s'" helm-ace-command) .
+                helm-nonrelative-file-ace-window)
+              :append)
+  (define-key helm-ag-map (kbd helm-ace-command) #'helm-nonrelative-file-run-ace-window)
+)
+
 
 ;; (global-set-key (kbd "C-t") 'projectile-find-file) (Tom uses this)
 (global-set-key (kbd "C-t") 'helm-projectile-find-file)
