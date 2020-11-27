@@ -578,24 +578,34 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     )
   )
 
-;; this is actually good; use it.
+(defun helm-ag-edit-run-ace-window ()
+ (interactive)
+ (with-helm-alive-p
+   (helm-exit-and-execute-action 'helm-ag-edit-run-ace-window-helper)))
+
+(defun helm-ag-edit-run-ace-window-helper ()
+  "Use ‘ace-window’ to select a window to display the file in GRR-LINE."
+  (unless (eq 1 (length (window-list)))
+    (ace-select-window))
+  (helm-ag-edit))
+
 ;;   C-c C-e (helm-ag-edit) needs an inverse of `occur' (`exclude')
 ;;   C-c C-e needs a way to not overwrite an existing buffer
-;;   needs to exclude files
-;;     (test with `M-g M-r any_digit' -- it should not include ext/)
 (global-set-key (kbd "M-g M-r") 'projectile-helm-ag)
 (after! helm-mode
   (define-key helm-ag-map (kbd "C-i") 'delete-backward-char)
   (define-key helm-ag-map (kbd "M-i") 'subword-backward-delete)
   (define-key helm-ag-map (kbd "C-k") 'delete-line-no-kill)
+  (define-key helm-ag-map (kbd "C-c C-e") 'helm-ag-edit-run-ace-window)
   (add-to-list 'helm-ag--actions
               '((format "Switch to file in Ace window ‘%s'" helm-ace-command) .
                 helm-nonrelative-file-ace-window)
               :append)
   (define-key helm-ag-map (kbd helm-ace-command) #'helm-nonrelative-file-run-ace-window)
-  ;;(setq-default helm-ag-ignore-buffer-patterns '("\\.txt\\'" "\\.mkd\\'"))
-)
-
+  (setq-default helm-ag-use-grep-ignore-list t)
+  (setq-default grep-find-ignored-directories '("SCCS" "RCS" "CVS" "MCVS" ".src" ".svn" ".git" ".hg" ".bzr" "_MTN" "_darcs" "{arch}" "ext" "clients" "proto/int" "node_modules"))
+  (setq-default grep-find-ignored-files '(".#*" "*.hi" "*.o" "*~" "*.bin" "*.lbin" "*.so" "*.a" "*.ln" "*.blg" "*.bbl" "*.elc" "*.lof" "*.glo" "*.idx" "*.lot" "*.fmt" "*.tfm" "*.class" "*.fas" "*.lib" "*.mem" "*.x86f" "*.sparcf" "*.dfsl" "*.pfsl" "*.d64fsl" "*.p64fsl" "*.lx64fsl" "*.lx32fsl" "*.dx64fsl" "*.dx32fsl" "*.fx64fsl" "*.fx32fsl" "*.sx64fsl" "*.sx32fsl" "*.wx64fsl" "*.wx32fsl" "*.fasl" "*.ufsl" "*.fsl" "*.dxl" "*.lo" "*.la" "*.gmo" "*.mo" "*.toc" "*.aux" "*.cp" "*.fn" "*.ky" "*.pg" "*.tp" "*.vr" "*.cps" "*.fns" "*.kys" "*.pgs" "*.tps" "*.vrs" "*.pyc" "*.pyo" ".gitignore" "**/*.csv" "**/*.pbxproj" "**/*.xcscheme" "**/package-lock.json" "**/yarn.lock" "**/function_catalog.pb" "**/*.svg" "*.pb.cc" "*.pb.h" "**/*.py.[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].py" "android/.idea" "android/.settings" "android/assets" "android/automator" "android/gen" "android/google_play_services" "android/jni/syncer" "android/res/values-*/strings.xml" "apps/experimental/video-conference/src/vendor" "apps/experimental/old-image" "apps/einstein-discovery/app/@salesforce/charts" "aws_lambda/sfdc_security_upload/requests*" "clients/hubot" "clients/integrations/httplib2" "cocoa/Include" "core/testdata/saml" "data/element_translation_test.py" "desktop/mac/Desktop/*.lproj/Localizable.strings" "desktop/mac/Ext" "desktop/mac/Web" "desktop/win/Desktop/Resources/Strings.*.json" "desktop/win/Ext" "desktop/win/include" "desktop/win/packages" "desktop/win/Web" "**/ext/*" "htmlcov" "ios/build" "ios/Ext" "ios/Pods" "ios/Quip/*lproj/*" "ios/Quip/Images.xcassets" "ios/Web" "ios/Teams/Web" "playground" "proto/ext/*" "rust/prefixindex/*" "scripts/data" "settings/android-version-log" "settings/authorized_keys*" "settings/canned_docs" "settings/hostmap_autogen/*.known_hosts" "settings/ios-version-log" "settings/ios/push_certs" "settings/macosx-version-log" "settings/names" "settings/pdf" "settings/testrunner/last_run_speed.json" "settings/translations" "static/css/email/email.css" "static/css/ext" "static/css/salesforce-lightning-design-system-ltng.css" "static/css/salesforce-lightning-design-system-ltng.min.css" "static/fonts" "static/function_catalog.pbascii" "static/images" "static/js/elements/externs/elements_api_autogen.js" "static/js/ext" "static/js/marketing/marketing.js" "static/less/ext" "static/less/marketing/marketing.css" "static/testdata" "static/ts/tools/typings" "static/ts/tools/dist" "static/ts/tools/tsc-allow/dist/" "static/ts/tools/transform/ext" "syncer/ext" "templates/jinja2/docx" "templates/jinja2/xlsx/" "templates/marketing/svg-home-live-apps-hero.html/"))
+  )
 
 ;; (global-set-key (kbd "C-t") 'projectile-find-file) (Tom uses this)
 (global-set-key (kbd "C-t") 'helm-projectile-find-file)
