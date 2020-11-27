@@ -441,10 +441,12 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     (ace-select-window))
   (let* ((prefix "~/quip/")
          (nonrelative-file (car (split-string grep-line ":")))
+         (lineno (string-to-number (car (cdr (split-string grep-line ":")))))
          (file (if (string-prefix-p prefix nonrelative-file)
                    nonrelative-file
                  (concat prefix nonrelative-file))))
-    (find-file file)))
+    (find-file file)
+    (goto-line lineno)))
 
 (setq helm-ace-command "M-RET")
 
@@ -591,6 +593,7 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
                 helm-nonrelative-file-ace-window)
               :append)
   (define-key helm-ag-map (kbd helm-ace-command) #'helm-nonrelative-file-run-ace-window)
+  ;;(setq-default helm-ag-ignore-buffer-patterns '("\\.txt\\'" "\\.mkd\\'"))
 )
 
 
