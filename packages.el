@@ -1,4 +1,7 @@
 (package! helm)
+(package! helm-ag)
+(package! compile+)
+(package! grep+)
 (package! whole-line-or-region)  ;; what is this?
 (package! afternoon-theme)
 (package! helm-ag)
@@ -14,5 +17,4 @@
 (package! ace-window)
 (package! move-text)
 (package! anzu)
-(package! hydra)
 (package! symbol-navigation-hydra)
