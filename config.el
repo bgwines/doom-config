@@ -654,8 +654,17 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (after! grep+
   ;; TODO:
   ;;   * ace-window to choose in which window to display the results?
-  ;;   * ace-window to choose in which window to open a result
-  ;;   * C-i / M-i / etc. for the two -all functions
+  (defun grepp-open-result-in-ace-window ()
+    "Use ‘ace-window’ to select a window to display the grep+ result."
+    (interactive)
+    (let ((curr (current-buffer)))
+      (unless (eq 1 (length (window-list)))
+        (ace-select-window))
+      (with-current-buffer curr
+        (compile-goto-error))))
+
+  (define-key grep-mode-map (kbd "M-RET") #'grepp-open-result-in-ace-window)
+
   (defun grr-helper (grr-name query)
     (grep (format "~/quip/bin/%s %s" grr-name query))
     (select-window (get-buffer-window "*grep*"))
