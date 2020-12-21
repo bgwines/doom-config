@@ -603,10 +603,6 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
     (ace-select-window))
   (helm-ag--edit grep-line))
 
-;;   C-c C-e (helm-ag-edit) needs an inverse of `occur' (`exclude')
-;;   C-c C-e ace buffer selection doesn't quite work
-(global-set-key (kbd "M-g M-r") 'projectile-helm-ag)
-
 (require 'helm-ag)
 (after! helm-ag
   (define-key helm-ag-map (kbd "C-i") 'delete-backward-char)
@@ -653,7 +649,7 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (require 'grep+)
 (after! grep+
   ;; TODO:
-  ;;   * ace-window to choose in which window to display the results?
+  ;;   * ace-window to choose in which window to display all results?
   (defun grepp-open-result-in-ace-window ()
     "Use ‘ace-window’ to select a window to display the grep+ result."
     (interactive)
@@ -661,9 +657,10 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
       (unless (eq 1 (length (window-list)))
         (ace-select-window))
       (with-current-buffer curr
-        (compile-goto-error))))
+        (compile-goto-error)))
+    (recenter-top-bottom))
 
-  (define-key grep-mode-map (kbd "M-RET") #'grepp-open-result-in-ace-window)
+  (define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-ace-window)
 
   (defun grr-helper (grr-name query)
     (grep (format "~/quip/bin/%s %s" grr-name query))
@@ -741,6 +738,10 @@ _q_:^ ^quit            | _b_: buffers |
     ("q" nil :exit t))
   (define-key grep-mode-map "h" 'grepp-hydra/body) ;; [h]elp / [h]ydra
 
+  (global-set-key (kbd "M-g M-r M-r") 'grr)
+  (global-set-key (kbd "M-g M-r M-s") 'grr-server)
+  (global-set-key (kbd "M-g M-r M-p") 'grr-proto)
+  (global-set-key (kbd "M-g M-r M-e") 'grr-ekm)
   )
 
 ;;;;;;;;;;;;;;;;;;;
