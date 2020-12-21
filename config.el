@@ -742,6 +742,9 @@ _q_:^ ^quit            | _b_: buffers |
   (global-set-key (kbd "M-g M-r M-s") 'grr-server)
   (global-set-key (kbd "M-g M-r M-p") 'grr-proto)
   (global-set-key (kbd "M-g M-r M-e") 'grr-ekm)
+
+  (setq-default grep-highlight-matches t)
+  (setq-default grepp-default-comment-line-regexp ":[0-9]+: *#")
   )
 
 ;;;;;;;;;;;;;;;;;;;
