@@ -62,8 +62,8 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_/_k_: othe
     ("0" balance-windows)
 
     ("y" delete-window :exit t)
-    ("o" ace-delete-window :exit t)
-    ("k" ace-delete-window :exit t)
+    ("o" ace-delete-window-wrapper :exit t)
+    ("k" ace-delete-window-wrapper :exit t)
     ("O" delete-other-windows :exit t)
     ("1" delete-other-windows :exit t)
 
@@ -72,9 +72,22 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_/_k_: othe
     ("f" windmove-right :exit t)
     ("b" windmove-left :exit t)
     ("a" ace-window :exit t)
-    ("s" ace-swap-window :exit t)
+    ("s" ace-swap-window-wrapper :exit t)
 
     ("q" nil :exit t)))
+
+(defun ace-swap-window-wrapper ()
+  (interactive)
+  (if (eq 2 (length (aw-window-list)))
+      (aw-swap-window (cadr (window-list)))
+    (ace-swap-window)))
+
+(defun ace-delete-window-wrapper ()
+  (interactive)
+  (if (eq 2 (length (aw-window-list)))
+      (aw-delete-window (cadr (window-list)))
+    (ace-delete-window)))
+
 (global-set-key (kbd "C-,") 'window-hydra/body)
 
 ;;;;;;;;;
@@ -664,6 +677,7 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
         (compile-goto-error)))
     (recenter-top-bottom))
 
+  (define-key grep-mode-map (kbd "RET") 'grepp-open-result-in-ace-window)
   (define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-ace-window)
 
   (defun grr-helper (grr-name query)
