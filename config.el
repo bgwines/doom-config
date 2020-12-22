@@ -297,6 +297,10 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (global-set-key (kbd "M-i") 'subword-backward-kill)
 (global-set-key (kbd "M-I") 'backward-kill-sexp)
 
+(define-key minibuffer-local-map (kbd "C-i") 'delete-backward-char)
+(define-key minibuffer-local-map (kbd "M-i") 'subword-backward-delete)
+(define-key minibuffer-local-map (kbd "C-k") 'delete-line-no-kill)
+
 (defun subword-backward-delete ()
   (interactive)
   (subword-backward-kill 1)
@@ -711,9 +715,6 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (define-key grep-mode-map "e" 'flush-lines-all)
   (define-key grep-mode-map (kbd "C-k") 'delete-line-no-kill)
   (define-key grep-mode-map (kbd "M-k") 'delete-whole-line-no-kill)
-  ;;(define-key interactive-map (kbd "C-i") 'delete-backward-char)
-  ;;(define-key interactive-map (kbd "M-i") 'subword-backward-delete)
-  ;;(define-key interactive-map (kbd "C-k") 'delete-line-no-kill)
 
   ;; Surfaces the more useful commands (all of these are already in the
   ;; mode-map)
