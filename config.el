@@ -26,6 +26,7 @@
 
 (global-set-key (kbd "C-c g s") 'magit-status)
 (global-set-key (kbd "C-c g b") 'magit-blame)
+(require 'git-link)
 (after! git-link
   (setq-default git-link-use-commit t))
 
@@ -45,6 +46,7 @@
 (setq display-line-numbers-type nil)
 
 ;; smartparens
+(require 'smartparens)
 (after! smartparens
   (load-file "~/doom-config/smartparens-hydra.el")
   (global-set-key (kbd "M-s") 'smartparens-hydra/body))
@@ -71,7 +73,6 @@
 
 ;; expand-region
 (global-set-key (kbd "M-e") 'er/expand-region)
-(global-set-key (kbd "M-?") 'help-command)
 
 ;;;;;;;;;;;;;;
 ;; flycheck ;;
@@ -346,27 +347,10 @@
 
 ;; yapf (don't auto-perform this upon save since it locks up emacs for a
 ;; sec)
-(defun yapf-current-buffer ()
-  (interactive)
-  (shell-command-to-string
-   (format "~/quip/bin/yapf --inplace %s" buffer-file-name)))
+(load-file "~/doom-config/yapf.el")
 (global-set-key (kbd "C-M-y") 'yapf-current-buffer)
 
-;; rename-file (this already exists in some function; TODO: look that up)
-(defun rename-file-and-buffer (new-name)
-  "Renames both current buffer and file it's visiting to NEW-NAME."
-  (interactive "sNew name: ")
-  (let ((name (buffer-name))
-        (filename (buffer-file-name)))
-    (if (not filename)
-        (message "Buffer '%s' is not visiting a file!" name)
-      (if (get-buffer new-name)
-          (message "A buffer named '%s' already exists!" new-name)
-        (progn
-          (rename-file name new-name 1)
-          (rename-buffer new-name)
-          (set-visited-file-name new-name)
-          (set-buffer-modified-p nil))))))
+(load-file "~/doom-config/rename-file-and-buffer.el")
 
 ;;;;;;;;;;;
 ;; modes ;;
@@ -381,6 +365,7 @@
 ;; yasnippet ;;
 ;;;;;;;;;;;;;;;
 
+(require 'yasnippet)
 (after! yasnippet
   (setq yas-snippet-dirs
         '("~/.emacs.d/private/snippets"))
