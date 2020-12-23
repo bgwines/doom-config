@@ -10,7 +10,6 @@
 (package! protobuf-mode)
 (package! fastnav)
 (package! git-link)
-(package! backward-forward)
 (package! hl-line)
 (package! doom-modeline)
 (package! package-lint)

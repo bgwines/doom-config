@@ -51,7 +51,6 @@
 (global-set-key (kbd "M-_") 'undo-tree-redo)
 
 ;; line numbers
-
 (defun goto-line-and-recenter ()
   (interactive)
   (call-interactively #'goto-line)
@@ -69,16 +68,12 @@
 (global-display-line-numbers-mode -1)
 (setq display-line-numbers-type nil)
 
-(load-file "~/doom-config/smartparens-hydra.el")
-(global-set-key (kbd "M-p") 'smartparens-hydra/body)
-
-;; jump to previous cursor locations
-(add-hook 'prog-mode-hook #'backward-forward-mode)
-(global-set-key (kbd "C-<left>") 'backward-forward-previous-location)
-(global-set-key (kbd "C-<right>") 'backward-forward-next-location)
+;; smartparens
 (after! smartparens
+  (load-file "~/doom-config/smartparens-hydra.el")
   (define-key smartparens-mode-map (kbd "C-<left>") 'backward-forward-previous-location)
-  (define-key smartparens-mode-map (kbd "C-<right>") 'backward-forward-next-location))
+  (define-key smartparens-mode-map (kbd "C-<right>") 'backward-forward-next-location)
+  (global-set-key (kbd "M-p") 'smartparens-hydra/body))
 
 ;; jump to start of line
 (global-set-key (kbd "C-'") 'back-to-indentation)
