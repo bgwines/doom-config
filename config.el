@@ -1,11 +1,3 @@
-
-;;;;;;;;;;
-;; misc ;;
-;;;;;;;;;;
-
-(global-set-key (kbd "M-?") 'help-command)
-(global-set-key (kbd "<tab>") 'indent-for-tab-command)
-
 ;;;;;;;;;;;;;;
 ;; SN Hydra ;;
 ;;;;;;;;;;;;;;
@@ -47,19 +39,7 @@
 (global-set-key (kbd "M-_") 'undo-tree-redo)
 
 ;; line numbers
-(defun goto-line-and-recenter ()
-  (interactive)
-  (call-interactively #'goto-line)
-  (recenter-top-bottom))
-
-(defhydra hydra-goto-line (goto-map ""
-                           :pre (linum-mode 1)
-                           :post (linum-mode -1))
-  "goto-line"
-  ("g" goto-line-and-recenter "go" :exit t)
-  ("RET" goto-line-and-recenter "go" :exit t)
-  ("m" set-mark-command "mark" :bind nil)
-  ("q" nil "quit"))
+(load-file "goto-line.el")
 (global-set-key (kbd "M-g M-g") 'hydra-goto-line/body)
 (global-display-line-numbers-mode -1)
 (setq display-line-numbers-type nil)
@@ -67,14 +47,7 @@
 ;; smartparens
 (after! smartparens
   (load-file "~/doom-config/smartparens-hydra.el")
-  (define-key smartparens-mode-map (kbd "C-<left>") 'backward-forward-previous-location)
-  (define-key smartparens-mode-map (kbd "C-<right>") 'backward-forward-next-location)
   (global-set-key (kbd "M-s") 'smartparens-hydra/body))
-
-;; jump to previous cursor locations
-(add-hook 'prog-mode-hook #'backward-forward-mode)
-(global-set-key (kbd "C-<left>") 'backward-forward-previous-location)
-(global-set-key (kbd "C-<right>") 'backward-forward-next-location)
 
 ;; jump to start of line
 (global-set-key (kbd "C-'") 'back-to-indentation)
@@ -83,30 +56,7 @@
 (global-set-key (kbd "M-l") 'move-to-window-line-top-bottom)
 
 ;; something-to-char
-(defvaralias 'lazy-highlight-face 'isearch-lazy-highlight) ;; NOT sure why
-    ;; this fixes a thing
-    ;; but it definitely fixes something with the next two commands
-
-(defun mark-up-to-char-backward (arg char)
-  (interactive "p\ncMark backwards up to char: ")
-  (if (char-table-p translation-table-for-input)
-      (setq char (or (aref translation-table-for-input char) char)))
-  (set-mark (point))
-  (goto-char (progn
-                         (search-backward (char-to-string char)
-                                         nil nil arg)
-                         (forward-char)
-                         (point))))
-
-(defun zap-backwards-to-char (arg char)
-  (interactive "p\ncZap backwards to char: ")
-  (if (char-table-p translation-table-for-input)
-      (setq char (or (aref translation-table-for-input char) char)))
-  (kill-region (point) (progn
-                         (search-backward (char-to-string char)
-                                         nil nil arg)
-                         (forward-char)
-                         (point))))
+(load-file "mark-or-zap-to-chars.el")
 (global-set-key (kbd "M-;") 'zap-backwards-to-char)
 (global-set-key (kbd "M-:") 'mark-up-to-char-backward)
 (global-set-key (kbd "M-Z") 'fastnav-mark-up-to-char-forward)
@@ -121,6 +71,7 @@
 
 ;; expand-region
 (global-set-key (kbd "M-e") 'er/expand-region)
+(global-set-key (kbd "M-?") 'help-command)
 
 ;;;;;;;;;;;;;;
 ;; flycheck ;;
@@ -198,6 +149,7 @@
 
 ;; spaces, not tabs
 (setq-default indent-tabs-mode nil)
+(global-set-key (kbd "<tab>") 'indent-for-tab-command)
 
 ;; Always add newline at end of file.
 (setq require-final-newline t)
