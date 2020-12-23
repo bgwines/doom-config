@@ -1,5 +1,4 @@
 (package! helm)
-(package! helm-ag)
 (package! compile+)
 (package! grep+)
 (package! whole-line-or-region)  ;; what is this?

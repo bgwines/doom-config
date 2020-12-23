@@ -124,10 +124,7 @@
 (setq mc/always-run-for-all t)
 
 ;; expand-region
-(global-set-key (kbd "M-s") 'er/expand-region)
-
-;; join-line
-(global-set-key (kbd "C-j") 'join-line)
+(global-set-key (kbd "M-e") 'er/expand-region)
 
 ;;;;;;;;;;;;;;
 ;; flycheck ;;
@@ -136,7 +133,6 @@
 (defun disable-flycheck-mode ()
   (interactive)
   (flycheck-mode -1))
-(add-hook 'python-mode-hook 'disable-flycheck-mode)
 (add-hook 'python-mode-hook 'disable-flycheck-mode)
 (add-hook 'protobuf-mode-hook 'disable-flycheck-mode)  ;; hook doesn't exist?
 
@@ -149,24 +145,6 @@
 ;; deletion ;;
 ;;;;;;;;;;;;;;
 
-;; backwards
-(global-set-key (kbd "C-i") 'delete-backward-char)
-(global-set-key (kbd "M-i") 'subword-backward-kill)
-(global-set-key (kbd "M-I") 'backward-kill-sexp)
-
-(define-key minibuffer-local-map (kbd "C-i") 'delete-backward-char)
-(define-key minibuffer-local-map (kbd "M-i") 'subword-backward-delete)
-(define-key minibuffer-local-map (kbd "C-k") 'delete-line-no-kill)
-
-(defun subword-backward-delete ()
-  (interactive)
-  (subword-backward-kill 1)
-  (setq kill-ring-yank-pointer (cdr kill-ring-yank-pointer))
-  )
-
-(after! markdown-mode
-  (define-key markdown-mode-map (kbd "C-i") 'delete-backward-char))
-
 (defun delete-line-no-kill ()
   (interactive)
   (delete-region
@@ -178,29 +156,43 @@
   (delete-line-no-kill)
   (delete-char 1))
 
-(after! helm-files
-  ;; neither of these seem to be having any effect
-  (setq-default helm-ff-newfile-prompt-p t)
-  (setq-default ffap-newfile-prompt t)
-  (define-key helm-map (kbd "C-i") 'delete-backward-char)
-  (define-key helm-map (kbd "M-i") 'subword-backward-delete)
-  (define-key helm-map (kbd "C-k") 'delete-line-no-kill)
-  (define-key helm-map (kbd "TAB") 'helm-ff-RET)
-  (define-key helm-map (kbd "\t") 'helm-ff-RET)
-  (define-key helm-read-file-map (kbd "C-i") 'delete-backward-char)
-  (define-key helm-read-file-map (kbd "M-i") 'subword-backward-delete)
-  (define-key helm-read-file-map (kbd "C-k") 'delete-line-no-kill)
-  (define-key helm-read-file-map (kbd "TAB") 'helm-ff-RET)
-  (define-key helm-read-file-map (kbd "\t") 'helm-ff-RET)
-  (define-key helm-find-files-map (kbd "C-i") 'delete-backward-char)
-  (define-key helm-find-files-map (kbd "M-i") 'subword-backward-delete)
-  (define-key helm-find-files-map (kbd "C-k") 'delete-line-no-kill)
-  (define-key helm-find-files-map (kbd "TAB") 'helm-ff-RET)
-  (define-key helm-find-files-map (kbd "\t") 'helm-ff-RET)
-  )
-(after! isearch
-  (define-key isearch-mode-map (kbd "C-i") 'isearch-del-char))
+(defun subword-backward-delete ()
+  (interactive)
+  (subword-backward-kill 1)
+  (setq kill-ring-yank-pointer (cdr kill-ring-yank-pointer)))
+
+(defun set-deletion-bindings (mode-map)
+  (define-key mode-map (kbd "C-i") 'delete-backward-char)
+  (define-key mode-map (kbd "M-i") 'subword-backward-delete)
+  (define-key mode-map (kbd "C-k") 'delete-line-no-kill))
+
+(global-set-key (kbd "C-i") 'delete-backward-char)
+(global-set-key (kbd "M-i") 'subword-backward-kill)
 (global-set-key (kbd "M-k") 'kill-whole-line)
+
+(set-deletion-bindings minibuffer-local-map)
+
+(after! markdown-mode
+  (set-deletion-bindings markdown-mode-map))
+
+(after! helm-files
+  (set-deletion-bindings helm-map)
+  (set-deletion-bindings helm-read-file-map)
+  (set-deletion-bindings helm-find-files-map)
+
+  ;; none of this works
+  ;;(setq-default helm-ff-newfile-prompt-p t)
+  ;;(setq-default ffap-newfile-prompt t)
+  ;;(define-key helm-map (kbd "TAB") 'helm-ff-RET)
+  ;;(define-key helm-map (kbd "\t") 'helm-ff-RET)
+  ;;(define-key helm-read-file-map (kbd "TAB") 'helm-ff-RET)
+  ;;(define-key helm-read-file-map (kbd "\t") 'helm-ff-RET)
+  ;;(define-key helm-find-files-map (kbd "TAB") 'helm-ff-RET)
+  ;;(define-key helm-find-files-map (kbd "\t") 'helm-ff-RET)
+  )
+
+(after! isearch
+  (set-deletion-bindings isearch-mode-map))
 
 ;; moving a line
 (defun move-line-up ()
@@ -231,7 +223,6 @@
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-;; (setq doom-theme 'doom-tomorrow-night)
 (setq doom-theme 'afternoon)
 (setq doom-font (font-spec :family "Source Code Pro" :size 20))
 
@@ -367,15 +358,7 @@
 ;;;;;;;;;;
 
 (after! (:and helm helm-buffers)
- (setq! helm-buffers-sort-fn #'helm-fuzzy-matching-sort-fn-preserve-ties-order)
- )
-
-(defun helm-find-files-in-root ()
-  "Open helm-find-files in the current project root."
-  (interactive)
-  (helm-find-files (doom-project-root))
-  )
-(global-set-key (kbd "C-c C-f") 'helm-find-files-in-root)
+ (setq! helm-buffers-sort-fn #'helm-fuzzy-matching-sort-fn-preserve-ties-order))
 
 (after! helm
  ;; Default green selection color is hideous
@@ -385,36 +368,17 @@
  ;; Helm buffer sort order is crazy without this; see
  ;; https://github.com/emacs-helm/helm/issues/1492
  (defun helm-buffers-sort-transformer@donot-sort (_ candidates _) candidates)
- (advice-add 'helm-buffers-sort-transformer :around 'helm-buffers-sort-transformer@donot-sort)
- )
+ (advice-add 'helm-buffers-sort-transformer :around 'helm-buffers-sort-transformer@donot-sort))
 
 ;;;;;;;;;;;;;;;;
 ;; Projectile ;;
 ;;;;;;;;;;;;;;;;
-
-;; helm-swoop
-(global-set-key (kbd "C-M-s") 'helm-swoop)
-(setq helm-swoop-use-line-number-face nil)
-
-(require 'helm-ag)
-(after! helm-ag
-  (define-key helm-ag-map (kbd "C-i") 'delete-backward-char)
-  (define-key helm-ag-map (kbd "M-i") 'subword-backward-delete)
-  (define-key helm-ag-map (kbd "C-k") 'delete-line-no-kill)
-  (define-key helm-ag-map (kbd helm-ace-command) #'helm-nonrelative-file-run-ace-window)
-  (add-to-list 'helm-ag--actions
-              '((format "Switch to file in Ace window ‘%s'" helm-ace-command) .
-                helm-nonrelative-file-ace-window)
-              :append)
-  (setq-default helm-ag-use-grep-ignore-list t)
-  )
 
 (after! helm-mode
   (setq-default grep-find-ignored-directories '("SCCS" "RCS" "CVS" "MCVS" ".src" ".svn" ".git" ".hg" ".bzr" "_MTN" "_darcs" "{arch}" "ext" "clients" "proto/int" "node_modules"))
   (setq-default grep-find-ignored-files '(".#*" "*.hi" "*.o" "*~" "*.bin" "*.lbin" "*.so" "*.a" "*.ln" "*.blg" "*.bbl" "*.elc" "*.lof" "*.glo" "*.idx" "*.lot" "*.fmt" "*.tfm" "*.class" "*.fas" "*.lib" "*.mem" "*.x86f" "*.sparcf" "*.dfsl" "*.pfsl" "*.d64fsl" "*.p64fsl" "*.lx64fsl" "*.lx32fsl" "*.dx64fsl" "*.dx32fsl" "*.fx64fsl" "*.fx32fsl" "*.sx64fsl" "*.sx32fsl" "*.wx64fsl" "*.wx32fsl" "*.fasl" "*.ufsl" "*.fsl" "*.dxl" "*.lo" "*.la" "*.gmo" "*.mo" "*.toc" "*.aux" "*.cp" "*.fn" "*.ky" "*.pg" "*.tp" "*.vr" "*.cps" "*.fns" "*.kys" "*.pgs" "*.tps" "*.vrs" "*.pyc" "*.pyo" ".gitignore" "**/*.csv" "**/*.pbxproj" "**/*.xcscheme" "**/package-lock.json" "**/yarn.lock" "**/function_catalog.pb" "**/*.svg" "*.pb.cc" "*.pb.h" "**/*.py.[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].py" "android/.idea" "android/.settings" "android/assets" "android/automator" "android/gen" "android/google_play_services" "android/jni/syncer" "android/res/values-*/strings.xml" "apps/experimental/video-conference/src/vendor" "apps/experimental/old-image" "apps/einstein-discovery/app/@salesforce/charts" "aws_lambda/sfdc_security_upload/requests*" "clients/hubot" "clients/integrations/httplib2" "cocoa/Include" "core/testdata/saml" "data/element_translation_test.py" "desktop/mac/Desktop/*.lproj/Localizable.strings" "desktop/mac/Ext" "desktop/mac/Web" "desktop/win/Desktop/Resources/Strings.*.json" "desktop/win/Ext" "desktop/win/include" "desktop/win/packages" "desktop/win/Web" "**/ext/*" "htmlcov" "ios/build" "ios/Ext" "ios/Pods" "ios/Quip/*lproj/*" "ios/Quip/Images.xcassets" "ios/Web" "ios/Teams/Web" "playground" "proto/ext/*" "rust/prefixindex/*" "scripts/data" "settings/android-version-log" "settings/authorized_keys*" "settings/canned_docs" "settings/hostmap_autogen/*.known_hosts" "settings/ios-version-log" "settings/ios/push_certs" "settings/macosx-version-log" "settings/names" "settings/pdf" "settings/testrunner/last_run_speed.json" "settings/translations" "static/css/email/email.css" "static/css/ext" "static/css/salesforce-lightning-design-system-ltng.css" "static/css/salesforce-lightning-design-system-ltng.min.css" "static/fonts" "static/function_catalog.pbascii" "static/images" "static/js/elements/externs/elements_api_autogen.js" "static/js/ext" "static/js/marketing/marketing.js" "static/less/ext" "static/less/marketing/marketing.css" "static/testdata" "static/ts/tools/typings" "static/ts/tools/dist" "static/ts/tools/tsc-allow/dist/" "static/ts/tools/transform/ext" "syncer/ext" "templates/jinja2/docx" "templates/jinja2/xlsx/" "templates/marketing/svg-home-live-apps-hero.html/"))
   )
 
-;; (global-set-key (kbd "C-t") 'projectile-find-file) (Tom uses this)
 (global-set-key (kbd "C-t") 'helm-projectile-find-file)
 (setq helm-locate-command
       "glocate %s %s"
