@@ -3,34 +3,24 @@
 ;; misc ;;
 ;;;;;;;;;;
 
-(defun ahsrp ()
-  (interactive)
-  (message "%s" (ahs-runnable-plugins)))
-
-(global-set-key (kbd "M-a") 'ahsrp)
-
 (global-set-key (kbd "M-?") 'help-command)
 (global-set-key (kbd "<tab>") 'indent-for-tab-command)
-(global-set-key (kbd "C-c C-l") 'eval-buffer)
-(global-set-key (kbd "C-M-x") 'eval-defun)
 
-;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
 ;; SN Hydra ;;
-;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;
 
 (require 'symbol-navigation-hydra)
 (after! symbol-navigation-hydra
   (global-set-key (kbd "M-t") 'symbol-navigation-hydra-engage-hydra)
   (setq-default ahs-case-fold-search nil)
-  (setq-default ahs-default-range 'ahs-range-whole-buffer))
-(setq-default ahs-idle-interval 999999999.0)
-(setq-default ahs-inhibit-face-list (delete 'font-lock-doc-string-face ahs-inhibit-face-list))
-(setq-default ahs-inhibit-face-list (delete 'font-lock-string-face ahs-inhibit-face-list))
-(setq-default ahs-inhibit-face-list (delete 'font-lock-doc-face ahs-inhibit-face-list))
-
-(defun snh-grr (query)
-  (grr-helper "absolute-grr-server" query))
-(setq-default symbol-navigation-hydra-project-search-fn 'snh-grr)
+  (setq-default ahs-default-range 'ahs-range-whole-buffer)
+  (setq-default ahs-idle-interval 999999999.0)
+  (setq-default ahs-inhibit-face-list (delete 'font-lock-doc-string-face ahs-inhibit-face-list))
+  (setq-default ahs-inhibit-face-list (delete 'font-lock-string-face ahs-inhibit-face-list))
+  (setq-default ahs-inhibit-face-list (delete 'font-lock-doc-face ahs-inhibit-face-list))
+  (setq-default symbol-navigation-hydra-project-search-fn
+                '(lambda (q) (grr-helper "absolute-grr-server" q))))
 
 ;;;;;;;;;;;;;
 ;; buffers ;;
@@ -38,61 +28,9 @@
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-;; remapping lost keystrokes
-(after! ibuffer
-  (define-key ibuffer-mode-map (kbd "<tab>") 'ibuffer-forward-filter-group))
-
 (after! hydra
-  (defun window-hydra-header ()
-    (propertize "Window Hydra" 'face `(:box t :weight bold)))
-
-  (defhydra window-hydra (:hint nil)
-  "
-%s(window-hydra-header)
-^ ^   Split     | ^ ^   Switch^ ^    | ^ ^    Resize   ^ ^   | ^ ^Close
-^-^-------------|-^-^---------^-^----|-^-^------^-^----------|-^-^-^-^------------
-_|_: vertical   | _a_: any    _f_: → | _F_: →   _0_: balance | _y_: current
-_-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_/_k_: other
-^ ^             | ^ ^         _p_: ↑ | _P_: ↑   ^ ^          | _O_/_1_: all others
-^ ^             | ^ ^         _n_: ↓ | _N_: ↓   ^ ^          | _q_: (quit)
-"
-    ("|" split-window-right :exit t)
-    ("-" split-window-below :exit t)
-
-    ("P" hydra-move-splitter-up)
-    ("N" hydra-move-splitter-down)
-    ("F" hydra-move-splitter-right)
-    ("B" hydra-move-splitter-left)
-    ("0" balance-windows)
-
-    ("y" delete-window :exit t)
-    ("o" ace-delete-window-wrapper :exit t)
-    ("k" ace-delete-window-wrapper :exit t)
-    ("O" delete-other-windows :exit t)
-    ("1" delete-other-windows :exit t)
-
-    ("p" windmove-up :exit t)
-    ("n" windmove-down :exit t)
-    ("f" windmove-right :exit t)
-    ("b" windmove-left :exit t)
-    ("a" ace-window :exit t)
-    ("s" ace-swap-window-wrapper :exit t)
-
-    ("q" nil :exit t)))
-
-(defun ace-swap-window-wrapper ()
-  (interactive)
-  (if (eq 2 (length (aw-window-list)))
-      (aw-swap-window (cadr (window-list)))
-    (ace-swap-window)))
-
-(defun ace-delete-window-wrapper ()
-  (interactive)
-  (if (eq 2 (length (aw-window-list)))
-      (aw-delete-window (cadr (window-list)))
-    (ace-delete-window)))
-
-(global-set-key (kbd "C-,") 'window-hydra/body)
+  (load-file "~/doom-config/window-hydra.el")
+  (global-set-key (kbd "C-,") 'window-hydra/body))
 
 ;;;;;;;;;
 ;; git ;;
@@ -107,25 +45,12 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_/_k_: othe
 ;; editing ;;
 ;;;;;;;;;;;;;
 
+(load-file "~/doom-config/new-scratch.el")
+
 ;; undo
 (global-set-key (kbd "M-_") 'undo-tree-redo)
 
-(defun new-scratch ()
-  "open up a guaranteed new scratch buffer"
-  (interactive)
-  (defun format-name (num)
-    (format "scratch-%03i" num))
-
-  (defun get-new-scratch-buffer-name ()
-    (interactive)
-    (setq num 0)
-    (while (get-buffer (format-name num))
-      (setq num (+ 1 num)))
-    (format-name num))
-
-  (switch-to-buffer (get-new-scratch-buffer-name)))
-
-;; cursor navigation
+;; line numbers
 
 (defun goto-line-and-recenter ()
   (interactive)
@@ -144,86 +69,8 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←   ^ ^          | _o_/_k_: othe
 (global-display-line-numbers-mode -1)
 (setq display-line-numbers-type nil)
 
-(defhydra hydra-rectangle (:body-pre (rectangle-mark-mode 1)
-                                     :color pink
-                                     :hint nil
-                                     :post (deactivate-mark))
-  "
-  ^_p_^       _w_ copy      _o_pen       _N_umber-lines            |\\     -,,,--,,_
-_b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..  \-;;,_
-  ^_n_^       _d_ kill      _c_lear      _r_eset-region-mark      |,4-  ) )_   .;.(  `'-'
-^^^^          _u_ndo        _g_ quit     ^ ^                     '---''(./..)-'(_\_)
-"
-  ("p" rectangle-previous-line)
-  ("n" rectangle-next-line)
-  ("b" rectangle-backward-char)
-  ("f" rectangle-forward-char)
-  ("d" kill-rectangle)                    ;; C-x r k
-  ("y" yank-rectangle)                    ;; C-x r y
-  ("w" copy-rectangle-as-kill)            ;; C-x r M-w
-  ("o" open-rectangle)                    ;; C-x r o
-  ("t" string-rectangle)                  ;; C-x r t
-  ("c" clear-rectangle)                   ;; C-x r c
-  ("e" rectangle-exchange-point-and-mark) ;; C-x C-x
-  ("N" rectangle-number-lines)            ;; C-x r N
-  ("r" (if (region-active-p)
-           (deactivate-mark)
-         (rectangle-mark-mode 1)))
-  ("u" undo nil)
-  ("g" nil))
-
-(defhydra hydra-smartparens (:hint nil)
-  "
- Moving^^^^                       Slurp & Barf^^   Wrapping^^            Sexp juggling^^^^               Destructive
-------------------------------------------------------------------------------------------------------------------------
- [_a_] beginning  [_n_] down      [_h_] bw slurp   [_R_]   rewrap        [_S_] split   [_t_] transpose   [_c_] change inner  [_w_] copy
- [_e_] end        [_N_] bw down   [_H_] bw barf    [_u_]   unwrap        [_s_] splice  [_A_] absorb      [_C_] change outer
- [_f_] forward    [_p_] up        [_l_] slurp      [_U_]   bw unwrap     [_r_] raise   [_E_] emit        [_k_] kill          [_g_] quit
- [_b_] backward   [_P_] bw up     [_L_] barf       [_(__{__[_] wrap (){}[]   [_j_] join    [_o_] convolute   [_K_] bw kill       [_q_] quit"
-  ;; Moving
-  ("a" sp-beginning-of-sexp :exit t)
-  ("e" sp-end-of-sexp :exit t)
-  ("f" sp-forward-sexp :exit t)
-  ("b" sp-backward-sexp :exit t)
-  ("n" sp-down-sexp :exit t)
-  ("N" sp-backward-down-sexp :exit t)
-  ("p" sp-up-sexp :exit t)
-  ("P" sp-backward-up-sexp :exit t)
-
-  ;; Slurping & barfing
-  ("h" sp-backward-slurp-sexp)
-  ("H" sp-backward-barf-sexp)
-  ("l" sp-forward-slurp-sexp)
-  ("L" sp-forward-barf-sexp)
-
-  ;; Wrapping
-  ("R" sp-rewrap-sexp)
-  ("u" sp-unwrap-sexp)
-  ("U" sp-backward-unwrap-sexp)
-  ("(" sp-wrap-round)
-  ("{" sp-wrap-curly)
-  ("[" sp-wrap-square)
-
-  ;; Sexp juggling
-  ("S" sp-split-sexp)
-  ("s" sp-splice-sexp)
-  ("r" sp-raise-sexp)
-  ("j" sp-join-sexp)
-  ("t" sp-transpose-sexp)
-  ("A" sp-absorb-sexp)
-  ("E" sp-emit-sexp)
-  ("o" sp-convolute-sexp)
-
-  ;; Destructive editing
-  ("c" sp-change-inner :exit t)
-  ("C" sp-change-enclosing :exit t)
-  ("k" sp-kill-sexp)
-  ("K" sp-backward-kill-sexp)
-  ("w" sp-copy-sexp)
-
-  ("q" nil)
-  ("g" nil))
-(global-set-key (kbd "M-p") 'hydra-smartparens/body)
+(load-file "~/doom-config/smartparens-hydra.el")
+(global-set-key (kbd "M-p") 'smartparens-hydra/body)
 
 ;; jump to previous cursor locations
 (add-hook 'prog-mode-hook #'backward-forward-mode)
