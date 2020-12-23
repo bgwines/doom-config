@@ -75,6 +75,11 @@
   (define-key smartparens-mode-map (kbd "C-<right>") 'backward-forward-next-location)
   (global-set-key (kbd "M-p") 'smartparens-hydra/body))
 
+;; jump to previous cursor locations
+(add-hook 'prog-mode-hook #'backward-forward-mode)
+(global-set-key (kbd "C-<left>") 'backward-forward-previous-location)
+(global-set-key (kbd "C-<right>") 'backward-forward-next-location)
+
 ;; jump to start of line
 (global-set-key (kbd "C-'") 'back-to-indentation)
 
@@ -110,13 +115,6 @@
 (global-set-key (kbd "M-:") 'mark-up-to-char-backward)
 (global-set-key (kbd "M-Z") 'fastnav-mark-up-to-char-forward)
 (global-set-key (kbd "M-z") 'zap-up-to-char)
-
-;; comment out region/line
-(global-set-key (kbd "C-/") 'whole-line-or-region-comment-dwim)
-
-;; avy
-(global-set-key (kbd "C-;") 'avy-goto-char)
-(global-set-key (kbd "C-:") 'avy-goto-char-2)
 
 ;; multiple cursors
 (global-set-key (kbd "M-u") 'mc/mark-previous-like-this)
