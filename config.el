@@ -1,3 +1,6 @@
+(defun load-helper-file (filename)
+  (load-file (format "~/doom-config/%s" filename)))
+
 ;;;;;;;;;;;;;;
 ;; SN Hydra ;;
 ;;;;;;;;;;;;;;
@@ -34,13 +37,13 @@
 ;; editing ;;
 ;;;;;;;;;;;;;
 
-(load-file "~/doom-config/new-scratch.el")
+(load-helper-file "new-scratch.el")
 
 ;; undo
 (global-set-key (kbd "M-_") 'undo-tree-redo)
 
 ;; line numbers
-(load-file "~/doom-config/goto-line.el")
+(load-helper-file "goto-line.el")
 (global-set-key (kbd "M-g M-g") 'hydra-goto-line/body)
 (global-display-line-numbers-mode -1)
 (setq display-line-numbers-type nil)
@@ -48,7 +51,7 @@
 ;; smartparens
 (require 'smartparens)
 (after! smartparens
-  (load-file "~/doom-config/smartparens-hydra.el")
+  (load-helper-file "smartparens-hydra.el")
   (global-set-key (kbd "M-s") 'smartparens-hydra/body))
 
 ;; jump to start of line
@@ -58,7 +61,7 @@
 (global-set-key (kbd "M-l") 'move-to-window-line-top-bottom)
 
 ;; mark or zap to char
-(load-file "~/doom-config/mark-or-zap-to-chars.el")
+(load-helper-file "mark-or-zap-to-chars.el")
 (global-set-key (kbd "M-;") 'zap-backwards-to-char)
 (global-set-key (kbd "M-:") 'mark-up-to-char-backward)
 (global-set-key (kbd "M-Z") 'fastnav-mark-up-to-char-forward)
@@ -78,7 +81,7 @@
 ;; deletion ;;
 ;;;;;;;;;;;;;;
 
-(load-file "~/doom-config/deletion-functions.el")
+(load-helper-file "deletion-functions.el")
 
 (defun set-deletion-bindings (mode-map)
   (define-key mode-map (kbd "C-i") 'delete-backward-char)
@@ -119,7 +122,7 @@
 
 (require 'ace-window)
 (after! ace-window
-  (load-file "~/doom-config/window-hydra.el")
+  (load-helper-file "window-hydra.el")
   (global-set-key (kbd "C-,") 'window-hydra/body)
   (setq aw-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
   (setq aw-dispatch-always t)
@@ -243,7 +246,7 @@
 
 (require 'grep+)
 (after! grep+
-  (load-file "~/doom-config/grr.el"))
+  (load-helper-file "grr.el"))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; doom modeline ;;
@@ -288,10 +291,10 @@
 
 ;; yapf (don't auto-perform this upon save since it locks up emacs for a
 ;; sec)
-(load-file "~/doom-config/yapf.el")
+(load-helper-file "yapf.el")
 (global-set-key (kbd "C-M-y") 'yapf-current-buffer)
 
-(load-file "~/doom-config/rename-file-and-buffer.el")
+(load-helper-file "rename-file-and-buffer.el")
 
 ;;;;;;;;;;;
 ;; modes ;;
@@ -319,14 +322,15 @@
 
 (defun disable-flycheck-mode ()
   (interactive)
-  (flycheck-mode -1))
+  (flycheck-mode -1)
+  (global-flycheck-mode -1))
+(add-hook 'prog-mode-hook 'disable-flycheck-mode)
 (add-hook 'python-mode-hook 'disable-flycheck-mode)
-(add-hook 'protobuf-mode-hook 'disable-flycheck-mode)  ;; hook doesn't exist?
+(remove-hook 'prog-mode-hook 'flycheck-mode)
+(remove-hook 'python-mode-hook 'flycheck-mode)
 
-(flycheck-mode -1)
-(global-flycheck-mode nil)
-(remove-hook 'prog-mode 'flycheck-mode)
-(setq-default flycheck-disabled-checkers '(tsx-tide typescript-tide ada-gnat asciidoctor asciidoc awk-gawk bazel-buildifier c/c++-clang c/c++-gcc c/c++-cppcheck cfengine chef-foodcritic coffee coffee-coffeelint coq css-csslint css-stylelint cuda-nvcc cwl d-dmd dockerfile-hadolint elixir-credo emacs-lisp emacs-lisp-checkdoc ember-template erlang-rebar3 erlang eruby-erubis eruby-ruumba fortran-gfortran go-gofmt go-golint go-vet go-build go-test go-errcheck go-unconvert go-staticcheck groovy haml handlebars haskell-stack-ghc haskell-ghc haskell-hlint html-tidy javascript-eslint javascript-jshint javascript-standard json-jsonlint json-python-json json-jq jsonnet less less-stylelint llvm-llc lua-luacheck lua markdown-markdownlint-cli markdown-mdl nix nix-linter opam perl perl-perlcritic php php-phpmd php-phpcs processing proselint protobuf-protoc protobuf-prototool pug puppet-parser puppet-lint python-flake8 python-pylint python-pycompile python-mypy r-lintr racket rpm-rpmlint rst-sphinx rst ruby-rubocop ruby-standard ruby-reek ruby-rubylint ruby ruby-jruby rust-cargo rust rust-clippy scala scala-scalastyle scheme-chicken scss-lint scss-stylelint sass/scss-sass-lint sass scss sh-bash sh-posix-dash sh-posix-bash sh-zsh sh-shellcheck slim slim-lint sql-sqlint systemd-analyze tcl-nagelfar terraform terraform-tflint tex-chktex tex-lacheck texinfo textlint typescript-tslint verilog-verilator vhdl-ghdl xml-xmlstarlet xml-xmllint yaml-jsyaml yaml-ruby yaml-yamllint javascript-tide jsx-tide))
+;; even if it is somehow enabled, all checkers will be disabled
+(setq-default flycheck-disabled-checkers 'flycheck-checkers)
 
 ;;;;;;;;;;;;;;;
 ;; cosmetics ;;
@@ -363,7 +367,7 @@
 (set-variable 'sentence-end-double-space nil)
 
 ;; font size
-(load-file "~/doom-config/text-zoom.el")
+(load-helper-file "text-zoom.el")
 (global-set-key (kbd "C-=") 'text-zoom/body)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

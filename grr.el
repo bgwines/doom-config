@@ -2,11 +2,19 @@
   "Use ‘ace-window’ to select a window to display the grep+ result."
   (interactive)
   (let ((curr (current-buffer)))
-    (unless (eq 1 (length (window-list)))
-      (ace-select-window))
-    (with-current-buffer curr
-      (compile-goto-error)))
-  (recenter-top-bottom))
+    (if (eq 1 (length (window-list)))
+        (progn
+          (compile-goto-error)
+          (recenter-top-bottom))
+      (progn
+        ;; `ace-select-window' uses `unwind-protect', so it's resilient to
+        ;; `C-g'. Unfortunately, that makes it more challenging to detect
+        ;; whether `C-g' ran at this level. It may be detectable via advising
+        ;; something in there?
+        (ace-select-window)
+        (with-current-buffer curr
+          (compile-goto-error))
+        (recenter-top-bottom)))))
 
 (define-key grep-mode-map (kbd "RET") 'grepp-open-result-in-ace-window)
 (define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-ace-window)
