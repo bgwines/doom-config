@@ -28,6 +28,10 @@
 (setq-default ahs-inhibit-face-list (delete 'font-lock-string-face ahs-inhibit-face-list))
 (setq-default ahs-inhibit-face-list (delete 'font-lock-doc-face ahs-inhibit-face-list))
 
+(defun snh-grr (query)
+  (grr-helper "absolute-grr-server" query))
+(setq-default symbol-navigation-hydra-project-search-fn 'snh-grr)
+
 ;;;;;;;;;;;;;
 ;; buffers ;;
 ;;;;;;;;;;;;;
@@ -681,7 +685,20 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
   (define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-ace-window)
 
   (defun grr-helper (grr-name query)
+    (interactive)
+    (unless (eq 1 (length (window-list)))
+      (ace-select-window))
+
+    ;; grr doesn't need this
+    (setq-default grep-use-null-device nil)
+
+    (defun display-same-window (buffer _)
+      (display-buffer-same-window buffer nil))
+
+    (setq-default display-buffer-overriding-action '(display-same-window . nil))
     (grep (format "~/quip/bin/%s %s" grr-name query))
+    (setq-default display-buffer-overriding-action '(nil . nil))
+
     (select-window (get-buffer-window "*grep*"))
     (grepp-rename-buffer-to-last-no-confirm)
     (read-only-mode 0)
