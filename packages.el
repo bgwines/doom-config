@@ -1,18 +1,29 @@
-(package! helm)
-(package! compile+)
-(package! grep+)
-(package! whole-line-or-region)  ;; what is this?
+;;;;;;;;;;;;
+;; in use ;;
+;;;;;;;;;;;;
+(package! ace-window)
 (package! afternoon-theme)
-(package! helm-ag)
-(package! helm-swoop)
-(package! undo-tree)
+(package! helm)
+(package! move-text)
+(package! package-lint)
 (package! protobuf-mode)
+(package! symbol-navigation-hydra)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; in use, but maybe could replace with vanilla ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(package! anzu)
+(package! doom-modeline)
 (package! fastnav)
 (package! git-link)
+(package! grep+)
 (package! hl-line)
-(package! doom-modeline)
-(package! package-lint)
-(package! ace-window)
-(package! move-text)
-(package! anzu)
-(package! symbol-navigation-hydra)
+(package! undo-tree)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; might want again one day ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;(package! compile+)  ;; used by grep+, but seems to be optional
+;;(package! helm-ag)
+;;(package! helm-swoop)
+;;(package! whole-line-or-region)

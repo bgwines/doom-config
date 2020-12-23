@@ -57,7 +57,7 @@
 ;; move cursor to top and bottom of window, set to M-l for symmetry with C-l
 (global-set-key (kbd "M-l") 'move-to-window-line-top-bottom)
 
-;; something-to-char
+;; mark or zap to char
 (load-file "~/doom-config/mark-or-zap-to-chars.el")
 (global-set-key (kbd "M-;") 'zap-backwards-to-char)
 (global-set-key (kbd "M-:") 'mark-up-to-char-backward)
@@ -73,21 +73,6 @@
 
 ;; expand-region
 (global-set-key (kbd "M-e") 'er/expand-region)
-
-;;;;;;;;;;;;;;
-;; flycheck ;;
-;;;;;;;;;;;;;;
-
-(defun disable-flycheck-mode ()
-  (interactive)
-  (flycheck-mode -1))
-(add-hook 'python-mode-hook 'disable-flycheck-mode)
-(add-hook 'protobuf-mode-hook 'disable-flycheck-mode)  ;; hook doesn't exist?
-
-(flycheck-mode -1)
-(global-flycheck-mode nil)
-(remove-hook 'prog-mode 'flycheck-mode)
-(setq-default flycheck-disabled-checkers '(tsx-tide typescript-tide ada-gnat asciidoctor asciidoc awk-gawk bazel-buildifier c/c++-clang c/c++-gcc c/c++-cppcheck cfengine chef-foodcritic coffee coffee-coffeelint coq css-csslint css-stylelint cuda-nvcc cwl d-dmd dockerfile-hadolint elixir-credo emacs-lisp emacs-lisp-checkdoc ember-template erlang-rebar3 erlang eruby-erubis eruby-ruumba fortran-gfortran go-gofmt go-golint go-vet go-build go-test go-errcheck go-unconvert go-staticcheck groovy haml handlebars haskell-stack-ghc haskell-ghc haskell-hlint html-tidy javascript-eslint javascript-jshint javascript-standard json-jsonlint json-python-json json-jq jsonnet less less-stylelint llvm-llc lua-luacheck lua markdown-markdownlint-cli markdown-mdl nix nix-linter opam perl perl-perlcritic php php-phpmd php-phpcs processing proselint protobuf-protoc protobuf-prototool pug puppet-parser puppet-lint python-flake8 python-pylint python-pycompile python-mypy r-lintr racket rpm-rpmlint rst-sphinx rst ruby-rubocop ruby-standard ruby-reek ruby-rubylint ruby ruby-jruby rust-cargo rust rust-clippy scala scala-scalastyle scheme-chicken scss-lint scss-stylelint sass/scss-sass-lint sass scss sh-bash sh-posix-dash sh-posix-bash sh-zsh sh-shellcheck slim slim-lint sql-sqlint systemd-analyze tcl-nagelfar terraform terraform-tflint tex-chktex tex-lacheck texinfo textlint typescript-tslint verilog-verilator vhdl-ghdl xml-xmlstarlet xml-xmllint yaml-jsyaml yaml-ruby yaml-yamllint javascript-tide jsx-tide))
 
 ;;;;;;;;;;;;;;
 ;; deletion ;;
@@ -128,44 +113,6 @@
 
 ;; Always add newline at end of file.
 (setq require-final-newline t)
-
-;;;;;;;;;;;;;;;
-;; cosmetics ;;
-;;;;;;;;;;;;;;;
-
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-(setq doom-theme 'afternoon)
-(setq doom-font (font-spec :family "Source Code Pro" :size 20))
-
-(after! company
- (setq company-bg-color (face-attribute 'default :background))
-
- (custom-set-faces
-  '(company-preview-common ((t (:background "#21e824bc35b0"))))
-  '(company-scrollbar-bg ((t (:background "#2bd12f784561"))))
-  '(company-scrollbar-fg ((t (:background "#21e824bc35b0"))))
-  '(company-tooltip ((t (:inherit default :background "#1bf61e4b2c46"))))
-  '(company-tooltip-annotation ((t (:foreground "deep sky blue"))))
-  '(company-tooltip-annotation-selection ((t (:inherit company-tooltip-annotation :foreground "deep sky blue" :weight bold))))
-  '(company-tooltip-common ((t (:inherit font-lock-constant-face))))
-  '(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
-  )
- )
-
-;; cursor
-(setq-default cursor-type 'bar)
-(after! hl-line
-  (set-face-background hl-line-face "#333333")
-  (set-face-attribute hl-line-face nil :underline t))
-
-;; When M-q formatting a comment, only use one space instead of two
-;; after a period.
-(set-variable 'sentence-end-double-space nil)
-
-;; font size
-(load-file "~/doom-config/text-zoom.el")
-(global-set-key (kbd "C-=") 'text-zoom/body)
 
 ;;;;;;;;;;;;;;;;
 ;; ace-window ;;
@@ -276,11 +223,6 @@
 ;; Projectile ;;
 ;;;;;;;;;;;;;;;;
 
-(after! helm-mode
-  (setq-default grep-find-ignored-directories '("SCCS" "RCS" "CVS" "MCVS" ".src" ".svn" ".git" ".hg" ".bzr" "_MTN" "_darcs" "{arch}" "ext" "clients" "proto/int" "node_modules"))
-  (setq-default grep-find-ignored-files '(".#*" "*.hi" "*.o" "*~" "*.bin" "*.lbin" "*.so" "*.a" "*.ln" "*.blg" "*.bbl" "*.elc" "*.lof" "*.glo" "*.idx" "*.lot" "*.fmt" "*.tfm" "*.class" "*.fas" "*.lib" "*.mem" "*.x86f" "*.sparcf" "*.dfsl" "*.pfsl" "*.d64fsl" "*.p64fsl" "*.lx64fsl" "*.lx32fsl" "*.dx64fsl" "*.dx32fsl" "*.fx64fsl" "*.fx32fsl" "*.sx64fsl" "*.sx32fsl" "*.wx64fsl" "*.wx32fsl" "*.fasl" "*.ufsl" "*.fsl" "*.dxl" "*.lo" "*.la" "*.gmo" "*.mo" "*.toc" "*.aux" "*.cp" "*.fn" "*.ky" "*.pg" "*.tp" "*.vr" "*.cps" "*.fns" "*.kys" "*.pgs" "*.tps" "*.vrs" "*.pyc" "*.pyo" ".gitignore" "**/*.csv" "**/*.pbxproj" "**/*.xcscheme" "**/package-lock.json" "**/yarn.lock" "**/function_catalog.pb" "**/*.svg" "*.pb.cc" "*.pb.h" "**/*.py.[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f].py" "android/.idea" "android/.settings" "android/assets" "android/automator" "android/gen" "android/google_play_services" "android/jni/syncer" "android/res/values-*/strings.xml" "apps/experimental/video-conference/src/vendor" "apps/experimental/old-image" "apps/einstein-discovery/app/@salesforce/charts" "aws_lambda/sfdc_security_upload/requests*" "clients/hubot" "clients/integrations/httplib2" "cocoa/Include" "core/testdata/saml" "data/element_translation_test.py" "desktop/mac/Desktop/*.lproj/Localizable.strings" "desktop/mac/Ext" "desktop/mac/Web" "desktop/win/Desktop/Resources/Strings.*.json" "desktop/win/Ext" "desktop/win/include" "desktop/win/packages" "desktop/win/Web" "**/ext/*" "htmlcov" "ios/build" "ios/Ext" "ios/Pods" "ios/Quip/*lproj/*" "ios/Quip/Images.xcassets" "ios/Web" "ios/Teams/Web" "playground" "proto/ext/*" "rust/prefixindex/*" "scripts/data" "settings/android-version-log" "settings/authorized_keys*" "settings/canned_docs" "settings/hostmap_autogen/*.known_hosts" "settings/ios-version-log" "settings/ios/push_certs" "settings/macosx-version-log" "settings/names" "settings/pdf" "settings/testrunner/last_run_speed.json" "settings/translations" "static/css/email/email.css" "static/css/ext" "static/css/salesforce-lightning-design-system-ltng.css" "static/css/salesforce-lightning-design-system-ltng.min.css" "static/fonts" "static/function_catalog.pbascii" "static/images" "static/js/elements/externs/elements_api_autogen.js" "static/js/ext" "static/js/marketing/marketing.js" "static/less/ext" "static/less/marketing/marketing.css" "static/testdata" "static/ts/tools/typings" "static/ts/tools/dist" "static/ts/tools/tsc-allow/dist/" "static/ts/tools/transform/ext" "syncer/ext" "templates/jinja2/docx" "templates/jinja2/xlsx/" "templates/marketing/svg-home-live-apps-hero.html/"))
-  )
-
 (global-set-key (kbd "C-t") 'helm-projectile-find-file)
 (setq helm-locate-command
       "glocate %s %s"
@@ -371,6 +313,63 @@
         '("~/.emacs.d/private/snippets"))
   (add-hook 'prog-mode-hook #'yas-minor-mode)
   (add-hook 'prog-mode-hook #'yas-reload-all))
+
+;;;;;;;;;;;;;;
+;; flycheck ;;
+;;;;;;;;;;;;;;
+
+(defun disable-flycheck-mode ()
+  (interactive)
+  (flycheck-mode -1))
+(add-hook 'python-mode-hook 'disable-flycheck-mode)
+(add-hook 'protobuf-mode-hook 'disable-flycheck-mode)  ;; hook doesn't exist?
+
+(flycheck-mode -1)
+(global-flycheck-mode nil)
+(remove-hook 'prog-mode 'flycheck-mode)
+(setq-default flycheck-disabled-checkers '(tsx-tide typescript-tide ada-gnat asciidoctor asciidoc awk-gawk bazel-buildifier c/c++-clang c/c++-gcc c/c++-cppcheck cfengine chef-foodcritic coffee coffee-coffeelint coq css-csslint css-stylelint cuda-nvcc cwl d-dmd dockerfile-hadolint elixir-credo emacs-lisp emacs-lisp-checkdoc ember-template erlang-rebar3 erlang eruby-erubis eruby-ruumba fortran-gfortran go-gofmt go-golint go-vet go-build go-test go-errcheck go-unconvert go-staticcheck groovy haml handlebars haskell-stack-ghc haskell-ghc haskell-hlint html-tidy javascript-eslint javascript-jshint javascript-standard json-jsonlint json-python-json json-jq jsonnet less less-stylelint llvm-llc lua-luacheck lua markdown-markdownlint-cli markdown-mdl nix nix-linter opam perl perl-perlcritic php php-phpmd php-phpcs processing proselint protobuf-protoc protobuf-prototool pug puppet-parser puppet-lint python-flake8 python-pylint python-pycompile python-mypy r-lintr racket rpm-rpmlint rst-sphinx rst ruby-rubocop ruby-standard ruby-reek ruby-rubylint ruby ruby-jruby rust-cargo rust rust-clippy scala scala-scalastyle scheme-chicken scss-lint scss-stylelint sass/scss-sass-lint sass scss sh-bash sh-posix-dash sh-posix-bash sh-zsh sh-shellcheck slim slim-lint sql-sqlint systemd-analyze tcl-nagelfar terraform terraform-tflint tex-chktex tex-lacheck texinfo textlint typescript-tslint verilog-verilator vhdl-ghdl xml-xmlstarlet xml-xmllint yaml-jsyaml yaml-ruby yaml-yamllint javascript-tide jsx-tide))
+
+;;;;;;;;;;;;;;;
+;; cosmetics ;;
+;;;;;;;;;;;;;;;
+
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+(setq doom-theme 'afternoon)
+(setq doom-font (font-spec :family "Source Code Pro" :size 20))
+
+(after! company
+ (setq company-bg-color (face-attribute 'default :background))
+
+ (custom-set-faces
+  '(company-preview-common ((t (:background "#21e824bc35b0"))))
+  '(company-scrollbar-bg ((t (:background "#2bd12f784561"))))
+  '(company-scrollbar-fg ((t (:background "#21e824bc35b0"))))
+  '(company-tooltip ((t (:inherit default :background "#1bf61e4b2c46"))))
+  '(company-tooltip-annotation ((t (:foreground "deep sky blue"))))
+  '(company-tooltip-annotation-selection ((t (:inherit company-tooltip-annotation :foreground "deep sky blue" :weight bold))))
+  '(company-tooltip-common ((t (:inherit font-lock-constant-face))))
+  '(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
+  )
+ )
+
+;; cursor
+(setq-default cursor-type 'bar)
+(after! hl-line
+  (set-face-background hl-line-face "#333333")
+  (set-face-attribute hl-line-face nil :underline t))
+
+;; When M-q formatting a comment, only use one space instead of two
+;; after a period.
+(set-variable 'sentence-end-double-space nil)
+
+;; font size
+(load-file "~/doom-config/text-zoom.el")
+(global-set-key (kbd "C-=") 'text-zoom/body)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Custom (don't edit any of this) ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; custom-set-variables was added by Custom.
 ;; If you edit it by hand, you could mess it up, so be careful.
