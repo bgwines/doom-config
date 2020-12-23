@@ -8,10 +8,10 @@
       (setq char (or (aref translation-table-for-input char) char)))
   (set-mark (point))
   (goto-char (progn
-                         (search-backward (char-to-string char)
-                                         nil nil arg)
-                         (forward-char)
-                         (point))))
+               (search-backward (char-to-string char)
+                                nil nil arg)
+               (forward-char)
+               (point))))
 
 (defun zap-backwards-to-char (arg char)
   (interactive "p\ncZap backwards to char: ")
@@ -19,6 +19,6 @@
       (setq char (or (aref translation-table-for-input char) char)))
   (kill-region (point) (progn
                          (search-backward (char-to-string char)
-                                         nil nil arg)
+                                          nil nil arg)
                          (forward-char)
                          (point))))

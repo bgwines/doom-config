@@ -118,7 +118,6 @@
 
 ;; moving a line
 (load-file "move-lines.el")
-
 (global-set-key (kbd "M-<up>") 'move-line-up)
 (global-set-key (kbd "M-<down>") 'move-line-down)
 
@@ -164,19 +163,7 @@
 (set-variable 'sentence-end-double-space nil)
 
 ;; font size
-(defun text-zoom-header ()
-  (propertize "Text Zoom" 'face `(:box t :weight bold)))
-
-(defhydra text-zoom (:hint nil)
-  "
-%s(text-zoom-header) _h_: +  _u_: -  _0_: reset  _q_: quit
-"
-  ("h" doom/increase-font-size)
-  ("+" doom/increase-font-size)
-  ("u" doom/decrease-font-size)
-  ("-" doom/decrease-font-size)
-  ("0" doom/reset-font-size)
-  ("q" nil :exit t))
+(load-file "~/doom-config/text-zoom.el")
 (global-set-key (kbd "C-=") 'text-zoom/body)
 
 ;;;;;;;;;;;;;;;;
