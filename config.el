@@ -103,9 +103,8 @@
   (set-deletion-bindings isearch-mode-map))
 
 ;; moving a line
-(load-file "~/doom-config/move-lines.el")
-(global-set-key (kbd "M-<up>") 'move-line-up)
-(global-set-key (kbd "M-<down>") 'move-line-down)
+(require 'move-text)
+(move-text-default-bindings)
 
 ;; spaces, not tabs
 (setq-default indent-tabs-mode nil)
