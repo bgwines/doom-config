@@ -556,88 +556,15 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 (global-set-key (kbd "C-M-s") 'helm-swoop)
 (setq helm-swoop-use-line-number-face nil)
 
-(defun projectile-helm-ag (arg)
-  "Run helm-do-ag relative to the project root.  Or, with prefix arg ARG, relative to the current directory."
-  (interactive "P")
-  (if arg
-      (progn
-        ;; Have to kill the prefix arg so it doesn't get forwarded
-        ;; and screw up helm-do-ag
-        (set-variable 'current-prefix-arg nil)
-
-        (if dired-directory
-            (helm-do-ag dired-directory)
-          (helm-do-ag (file-name-directory (buffer-file-name)))
-          )
-        )
-    (helm-do-ag (projectile-project-root))
-    ))
-
-(after! helm-ag
-  (defun projectile-helm-ag-dired-aware (arg)
-    "Run `helm-do-ag' relative to the project root, searching for `QUERY'.
-
-  Or, with prefix arg `ARG', search relative to the current directory."
-    (interactive "P")
-    (message "normal mode")
-    (if arg
-        (progn
-          ;; Have to kill the prefix arg so it doesn't get forwarded
-          ;; and screw up helm-do-ag
-          (set-variable 'current-prefix-arg nil)
-          (if dired-directory
-              (helm-do-ag dired-directory)
-            (helm-do-ag nil)
-            )
-          )
-      (helm-do-ag nil)))
-
-  (defun helm-projectile-ag-scoped (directory &optional options)
-    (interactive "D")
-    (if (projectile-project-p)
-        (let* ((grep-find-ignored-files
-                (cl-union (projectile-ignored-files-rel) grep-find-ignored-files))
-               (grep-find-ignored-directories
-                (cl-union (projectile-ignored-directories-rel) grep-find-ignored-directories))
-               (ignored (mapconcat (lambda (i)
-                                     (concat "--ignore " i))
-                                   (append grep-find-ignored-files
-                                           grep-find-ignored-directories
-                                           (cadr (projectile-parse-dirconfig-file)))
-                                   " "))
-               (helm-ag-base-command (concat helm-ag-base-command " " ignored " " options))
-               (current-prefix-arg nil)
-               (ag-directory (if directory directory (projectile-project-root))))
-          (helm-do-ag ag-directory (car (projectile-parse-dirconfig-file)) nil))
-      (error "You're not in a project"))
-    )
-  )
-
-(defun helm-ag-edit-run-ace-window ()
- (interactive)
- (with-helm-alive-p
-   (helm-exit-and-execute-action 'helm-ag-edit-ace-window)))
-
-(defun helm-ag-edit-ace-window (grep-line)
-  "Use ‘ace-window’ to select a window to edit the grep results."
-  (unless (eq 1 (length (window-list)))
-    (ace-select-window))
-  (helm-ag--edit grep-line))
-
 (require 'helm-ag)
 (after! helm-ag
   (define-key helm-ag-map (kbd "C-i") 'delete-backward-char)
   (define-key helm-ag-map (kbd "M-i") 'subword-backward-delete)
   (define-key helm-ag-map (kbd "C-k") 'delete-line-no-kill)
-  (define-key helm-ag-map (kbd "C-c C-e") #'helm-ag-edit-run-ace-window)
   (define-key helm-ag-map (kbd helm-ace-command) #'helm-nonrelative-file-run-ace-window)
   (add-to-list 'helm-ag--actions
               '((format "Switch to file in Ace window ‘%s'" helm-ace-command) .
                 helm-nonrelative-file-ace-window)
-              :append)
-  (add-to-list 'helm-ag--actions
-              '((format "Edit results in Ace window ‘%s'" "C-c C-e") .
-                helm-ag-edit-ace-window)
               :append)
   (setq-default helm-ag-use-grep-ignore-list t)
   )
@@ -669,8 +596,6 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
 (require 'grep+)
 (after! grep+
-  ;; TODO:
-  ;;   * ace-window to choose in which window to display all results?
   (defun grepp-open-result-in-ace-window ()
     "Use ‘ace-window’ to select a window to display the grep+ result."
     (interactive)
@@ -694,7 +619,6 @@ _b_   _f_     _y_ank        _t_ype       _e_xchange-point          /,`.-'`'   ..
 
     (defun display-same-window (buffer _)
       (display-buffer-same-window buffer nil))
-
     (setq-default display-buffer-overriding-action '(display-same-window . nil))
     (grep (format "~/quip/bin/%s %s" grr-name query))
     (setq-default display-buffer-overriding-action '(nil . nil))
