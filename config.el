@@ -56,7 +56,7 @@
 (global-set-key (kbd "M-l") 'move-to-window-line-top-bottom)
 
 ;; something-to-char
-(load-file "mark-or-zap-to-chars.el")
+(load-file "~/doom-config/mark-or-zap-to-chars.el")
 (global-set-key (kbd "M-;") 'zap-backwards-to-char)
 (global-set-key (kbd "M-:") 'mark-up-to-char-backward)
 (global-set-key (kbd "M-Z") 'fastnav-mark-up-to-char-forward)
@@ -92,21 +92,7 @@
 ;; deletion ;;
 ;;;;;;;;;;;;;;
 
-(defun delete-line-no-kill ()
-  (interactive)
-  (delete-region
-   (point)
-   (save-excursion (move-end-of-line 1) (point))))
-
-(defun delete-whole-line-no-kill ()
-  (interactive)
-  (delete-line-no-kill)
-  (delete-char 1))
-
-(defun subword-backward-delete ()
-  (interactive)
-  (subword-backward-kill 1)
-  (setq kill-ring-yank-pointer (cdr kill-ring-yank-pointer)))
+(load-file "~/doom-config/deletion-functions.el")
 
 (defun set-deletion-bindings (mode-map)
   (define-key mode-map (kbd "C-i") 'delete-backward-char)
