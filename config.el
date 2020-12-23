@@ -28,10 +28,6 @@
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-(after! hydra
-  (load-file "~/doom-config/window-hydra.el")
-  (global-set-key (kbd "C-,") 'window-hydra/body))
-
 ;;;;;;;;;
 ;; git ;;
 ;;;;;;;;;
@@ -73,7 +69,7 @@
   (load-file "~/doom-config/smartparens-hydra.el")
   (define-key smartparens-mode-map (kbd "C-<left>") 'backward-forward-previous-location)
   (define-key smartparens-mode-map (kbd "C-<right>") 'backward-forward-next-location)
-  (global-set-key (kbd "M-p") 'smartparens-hydra/body))
+  (global-set-key (kbd "M-s") 'smartparens-hydra/body))
 
 ;; jump to previous cursor locations
 (add-hook 'prog-mode-hook #'backward-forward-mode)
@@ -178,18 +174,7 @@
 (after! helm-files
   (set-deletion-bindings helm-map)
   (set-deletion-bindings helm-read-file-map)
-  (set-deletion-bindings helm-find-files-map)
-
-  ;; none of this works
-  ;;(setq-default helm-ff-newfile-prompt-p t)
-  ;;(setq-default ffap-newfile-prompt t)
-  ;;(define-key helm-map (kbd "TAB") 'helm-ff-RET)
-  ;;(define-key helm-map (kbd "\t") 'helm-ff-RET)
-  ;;(define-key helm-read-file-map (kbd "TAB") 'helm-ff-RET)
-  ;;(define-key helm-read-file-map (kbd "\t") 'helm-ff-RET)
-  ;;(define-key helm-find-files-map (kbd "TAB") 'helm-ff-RET)
-  ;;(define-key helm-find-files-map (kbd "\t") 'helm-ff-RET)
-  )
+  (set-deletion-bindings helm-find-files-map))
 
 (after! isearch
   (set-deletion-bindings isearch-mode-map))
@@ -272,7 +257,8 @@
 ;;;;;;;;;;;;;;;;
 
 (after! ace-window
-  (global-set-key (kbd "M-o") 'ace-window)
+  (load-file "~/doom-config/window-hydra.el")
+  (global-set-key (kbd "C-,") 'window-hydra/body)
   (setq aw-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
   (setq aw-dispatch-always t)
   (custom-set-faces
@@ -400,112 +386,7 @@
 
 (require 'grep+)
 (after! grep+
-  (defun grepp-open-result-in-ace-window ()
-    "Use ‘ace-window’ to select a window to display the grep+ result."
-    (interactive)
-    (let ((curr (current-buffer)))
-      (unless (eq 1 (length (window-list)))
-        (ace-select-window))
-      (with-current-buffer curr
-        (compile-goto-error)))
-    (recenter-top-bottom))
-
-  (define-key grep-mode-map (kbd "RET") 'grepp-open-result-in-ace-window)
-  (define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-ace-window)
-
-  (defun grr-helper (grr-name query)
-    (interactive)
-    (unless (eq 1 (length (window-list)))
-      (ace-select-window))
-
-    ;; grr doesn't need this
-    (setq-default grep-use-null-device nil)
-
-    (defun display-same-window (buffer _)
-      (display-buffer-same-window buffer nil))
-    (setq-default display-buffer-overriding-action '(display-same-window . nil))
-    (grep (format "~/quip/bin/%s %s" grr-name query))
-    (setq-default display-buffer-overriding-action '(nil . nil))
-
-    (select-window (get-buffer-window "*grep*"))
-    (grepp-rename-buffer-to-last-no-confirm)
-    (read-only-mode 0)
-    (delete-whole-line-no-kill)  ;; -*- mode: grep; default-directory: ...
-    (delete-whole-line-no-kill)  ;; Grep started at Mon Dec 21 13:33:23
-    (delete-whole-line-no-kill)  ;; empty line
-    ;; (leave the line that contains the command that was run)
-    )
-
-  (defun grr (query)
-    (interactive "sQuery: ")
-    (grr-helper "absolute-grr" query)
-    )
-
-  (defun grr-server (query)
-    (interactive "sQuery: ")
-    (grr-helper "absolute-grr-server" query)
-    )
-
-  (defun grr-proto (query)
-    (interactive "sQuery: ")
-    (grr-helper "absolute-grr-proto" query)
-    )
-
-  (defun grr-ekm (query)
-    (interactive "sQuery: ")
-    (grr-helper "absolute-grr-ekm" query)
-    )
-
-  (defun keep-lines-all (query)
-    (interactive "sKeep lines containing match for regexp: ")
-    (beginning-of-buffer)
-    (keep-lines query)
-    )
-
-  (defun flush-lines-all (query)
-    (interactive "sFlush lines containing match for regexp: ")
-    (beginning-of-buffer)
-    (flush-lines query)
-    )
-
-  (define-key grep-mode-map "k" 'keep-lines-all)
-  (define-key grep-mode-map "i" 'keep-lines-all)
-  (define-key grep-mode-map "f" 'flush-lines-all)
-  (define-key grep-mode-map "e" 'flush-lines-all)
-  (define-key grep-mode-map (kbd "C-k") 'delete-line-no-kill)
-  (define-key grep-mode-map (kbd "M-k") 'delete-whole-line-no-kill)
-
-  ;; Surfaces the more useful commands (all of these are already in the
-  ;; mode-map)
-  (defhydra grepp-hydra (:hint nil)
-  (format "%s
-^ ^ ^ ^  Filtering     | ^ ^ Buffers  |
-^-^-^-^----------------|-^-^----------|
-_k_/_i_: keep/include  | _+_/_n_: new   |
-_f_/_e_: flush/exclude | _g_: grep    |
-_q_:^ ^quit            | _b_: buffers |
-" (propertize "Grep+ Hydra" 'face `(:box t :weight bold)))
-    ("k" keep-lines-all :exit t)
-    ("i" keep-lines-all :exit t)
-    ("f" flush-lines-all :exit t)
-    ("e" flush-lines-all :exit t)
-
-    ("+" grepp-new-grep-buffer :exit t)
-    ("n" grepp-new-grep-buffer :exit t)
-    ("g" grep :exit t)
-    ("b" grepp-choose-grep-buffer :exit t)
-
-    ("q" nil :exit t))
-  (define-key grep-mode-map "h" 'grepp-hydra/body) ;; [h]elp / [h]ydra
-
-  (global-set-key (kbd "M-g M-r M-r") 'grr)
-  (global-set-key (kbd "M-g M-r M-s") 'grr-server)
-  (global-set-key (kbd "M-g M-r M-p") 'grr-proto)
-  (global-set-key (kbd "M-g M-r M-e") 'grr-ekm)
-
-  (setq-default grep-highlight-matches t)
-  (setq-default grepp-default-comment-line-regexp ":[0-9]+: *#")
-  )
+  (load-file "~/doom-config/grr.el"))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; doom modeline ;;
@@ -543,20 +424,13 @@ _q_:^ ^quit            | _b_: buffers |
   (when buffer-file-name (save-buffer)))
 (defadvice other-window (before other-window-now activate)
   (when buffer-file-name (save-buffer)))
-(defadvice windmove-up (before other-window-now activate)
-  (when buffer-file-name (save-buffer)))
-(defadvice windmove-down (before other-window-now activate)
-  (when buffer-file-name (save-buffer)))
-(defadvice windmove-left (before other-window-now activate)
-  (when buffer-file-name (save-buffer)))
-(defadvice windmove-right (before other-window-now activate)
-  (when buffer-file-name (save-buffer)))
 
 ;;;;;;;;;;;;;;
 ;; assorted ;;
 ;;;;;;;;;;;;;;
 
-;; yapf (don't auto-perform this upon save since it locks up emacs for a sec)
+;; yapf (don't auto-perform this upon save since it locks up emacs for a
+;; sec)
 (defun yapf-current-buffer ()
   (interactive)
   (shell-command-to-string
@@ -565,14 +439,14 @@ _q_:^ ^quit            | _b_: buffers |
 
 ;; rename-file (this already exists in some function; TODO: look that up)
 (defun rename-file-and-buffer (new-name)
-"Renames both current buffer and file it's visiting to NEW-NAME."
-(interactive "sNew name: ")
-(let ((name (buffer-name))
-  (filename (buffer-file-name)))
-  (if (not filename)
-    (message "Buffer '%s' is not visiting a file!" name)
-    (if (get-buffer new-name)
-      (message "A buffer named '%s' already exists!" new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (if (get-buffer new-name)
+          (message "A buffer named '%s' already exists!" new-name)
         (progn
           (rename-file name new-name 1)
           (rename-buffer new-name)
@@ -598,26 +472,10 @@ _q_:^ ^quit            | _b_: buffers |
   (add-hook 'prog-mode-hook #'yas-minor-mode)
   (add-hook 'prog-mode-hook #'yas-reload-all))
 
-;;;;;;;;;;;;;
-;; spotify ;;
-;;;;;;;;;;;;;
-
-(add-to-list 'load-path "/Users/bwines/doom-manually-cloned-packages/spotify.el")
-;;(require 'spotify)
-(after! spotify
-  (setq spotify-oauth2-client-secret "d6af04f7574a4ec3b9c4b66b504fb806")
-  (setq spotify-oauth2-client-id "8e2e1e959e54496eb6c7a623402f49b1")
-  ;;(setq spotify-transport 'connect)
-  (setq spotify-player-status-truncate-length 20) ; default: 15
-  (setq spotify-player-status-playing-text "♬")
-  (setq spotify-player-status-paused-text "‖")
-  (setq spotify-player-status-format "[%p %a - %t]")
-  (global-spotify-remote-mode))
-
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
+;; custom-set-variables was added by Custom.
+;; If you edit it by hand, you could mess it up, so be careful.
+;; Your init file should contain only one such instance.
+;; If there is more than one, they won't work right.
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
