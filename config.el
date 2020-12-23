@@ -39,7 +39,7 @@
 (global-set-key (kbd "M-_") 'undo-tree-redo)
 
 ;; line numbers
-(load-file "goto-line.el")
+(load-file "~/doom-config/goto-line.el")
 (global-set-key (kbd "M-g M-g") 'hydra-goto-line/body)
 (global-display-line-numbers-mode -1)
 (setq display-line-numbers-type nil)
@@ -117,7 +117,7 @@
   (set-deletion-bindings isearch-mode-map))
 
 ;; moving a line
-(load-file "move-lines.el")
+(load-file "~/doom-config/move-lines.el")
 (global-set-key (kbd "M-<up>") 'move-line-up)
 (global-set-key (kbd "M-<down>") 'move-line-down)
 
@@ -170,6 +170,7 @@
 ;; ace-window ;;
 ;;;;;;;;;;;;;;;;
 
+(require 'ace-window)
 (after! ace-window
   (load-file "~/doom-config/window-hydra.el")
   (global-set-key (kbd "C-,") 'window-hydra/body)
