@@ -312,7 +312,7 @@
 (require 'yasnippet)
 (after! yasnippet
   (setq yas-snippet-dirs
-        '("~/.emacs.d/private/snippets"))
+        '("~/doom-config/yasnippets"))
   (add-hook 'prog-mode-hook #'yas-minor-mode)
   (add-hook 'prog-mode-hook #'yas-reload-all))
 
