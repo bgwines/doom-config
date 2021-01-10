@@ -23,6 +23,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; might want again one day ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (package! helm-posframe)  ;; doesn't handle OSX full screen windows well
 ;;(package! compile+)  ;; used by grep+, but seems to be optional
 ;;(package! helm-ag)
 ;;(package! helm-swoop)
