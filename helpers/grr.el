@@ -19,9 +19,9 @@
 (define-key grep-mode-map (kbd "RET") 'grepp-open-result-in-ace-window)
 (define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-ace-window)
 
-(defun grr-helper (grr-name query query-fn)
+(defun grr-helper (grr-name query query-fn same-window)
   (interactive)
-  (unless (eq 1 (length (window-list)))
+  (unless (or (eq 1 (length (window-list))) same-window)
     (ace-select-window))
 
   ;; grr doesn't need this
@@ -51,21 +51,21 @@
   (setq buffer-local-grr-query query)
   (setq buffer-local-grr-query-fn query-fn))
 
-(defun grr (query)
+(defun grr (query &optional same-window)
   (interactive "sQuery: ")
-  (grr-helper "absolute-grr" query 'grr))
+  (grr-helper "absolute-grr" query 'grr same-window))
 
-(defun grr-server (query)
+(defun grr-server (query &optional same-window)
   (interactive "sQuery: ")
-  (grr-helper "absolute-grr-server" query 'grr-server))
+  (grr-helper "absolute-grr-server" query 'grr-server same-window))
 
-(defun grr-proto (query)
+(defun grr-proto (query &optional same-window)
   (interactive "sQuery: ")
-  (grr-helper "absolute-grr-proto" query 'grr-proto))
+  (grr-helper "absolute-grr-proto" query 'grr-proto same-window))
 
-(defun grr-ekm (query)
+(defun grr-ekm (query &optional same-window)
   (interactive "sQuery: ")
-  (grr-helper "absolute-grr-ekm" query 'grr-ekm))
+  (grr-helper "absolute-grr-ekm" query 'grr-ekm same-window))
 
 (defun keep-lines-all (query)
   (interactive "sKeep lines containing match for regexp: ")
@@ -78,9 +78,8 @@
   (flush-lines query))
 
 (defun rerun-grr ()
-  ;; TODO: same window
   (interactive)
-  (funcall buffer-local-grr-query-fn buffer-local-grr-query))
+  (funcall buffer-local-grr-query-fn buffer-local-grr-query t))
 
 (define-key grep-mode-map "k" 'keep-lines-all)
 (define-key grep-mode-map "i" 'keep-lines-all)
