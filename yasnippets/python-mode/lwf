@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: lwf
+# key: lwf
+# --
+logging.warn(f"$1: {$1}")

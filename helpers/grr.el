@@ -33,23 +33,22 @@
   (grep (format "~/quip/bin/%s %s" grr-name query))
   (setq-default display-buffer-overriding-action '(nil . nil))
 
-  ;; it's already focused by default, so this isn't needed, I think
-  ;;(let* ((pred (lambda (window)
-  ;;               (let ((buf-name (buffer-name (window-buffer window))))
-  ;;                 (message buf-name)
-  ;;                 (string-prefix-p "*grep*" buf-name))))
-  ;;       (window (get-window-with-predicate pred)))
-  ;;  (select-window (window)))
   (grepp-rename-buffer-to-last-no-confirm)
+  (message "setting read-only-mode 0 [START]")
   (read-only-mode 0)
-  (delete-whole-line-no-kill)  ;; -*- mode: grep; default-directory: ...
-  (delete-whole-line-no-kill)  ;; Grep started at Mon Dec 21 13:33:23
-  (delete-whole-line-no-kill)  ;; empty line
+  (message "setting read-only-mode 0 [DONE]")
+  (message (current-buffer))
+  (flush-lines "-*- mode: grep; default-directory:")
+  (flush-lines "Grep started at")
+  (flush-lines "\n")
   ;; (leave the line that contains the command that was run)
+  (flush-lines "Grep finished with matches found at")
+  (beginning-of-buffer)
 
   ;; update buffer-local variables so that we can easily rerun the query
   (setq buffer-local-grr-query query)
-  (setq buffer-local-grr-query-fn query-fn))
+  (setq buffer-local-grr-query-fn query-fn)
+  (message "reached end"))
 
 (defun grr (query &optional same-window)
   (interactive "sQuery: ")

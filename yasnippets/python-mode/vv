@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: vv
+# key: vv
+# --
+core.varz.write("$1", 1, tags={"$2": $3})

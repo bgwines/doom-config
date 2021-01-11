@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: lcf
+# key: lcf
+# --
+logging.NOCOMMIT(f"$1: {$1}")

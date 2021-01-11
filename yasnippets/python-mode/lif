@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: lif
+# key: lif
+# --
+logging.info(f"$1: {$1}")
