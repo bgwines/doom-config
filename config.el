@@ -339,7 +339,7 @@
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (setq doom-theme 'afternoon)
-(setq doom-font (font-spec :family "Source Code Pro" :size 20))
+(setq doom-font (font-spec :family "Source Code Pro" :size 16))
 
 (after! company
  (setq company-bg-color (face-attribute 'default :background))
