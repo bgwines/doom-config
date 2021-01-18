@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: cog
+# key: cog
+# --
+import core.options
+
+options, define = core.options.group()

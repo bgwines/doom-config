@@ -11,4 +11,4 @@
                        ("cog" "import core.options\n\noptions, define = core.options.group()" "cog" nil nil nil "/Users/bwines/doom-config/yasnippets/python-mode/cog" nil nil)))
 
 
-;;; Do not edit! File generated at Sun Jan 17 23:43:02 2021
+;;; Do not edit! File generated at Sun Jan 17 23:46:12 2021
