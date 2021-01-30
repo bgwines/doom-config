@@ -2,4 +2,4 @@
 # name: lwf
 # key: lwf
 # --
-logging.warn(f"$1: {$1}")
+logging.warning(f"$1: {$1}")

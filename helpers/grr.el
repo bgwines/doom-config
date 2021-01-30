@@ -69,11 +69,13 @@
 (defun keep-lines-all (query)
   (interactive "sKeep lines containing match for regexp: ")
   (beginning-of-buffer)
+  (read-only-mode 0)
   (keep-lines query))
 
 (defun flush-lines-all (query)
   (interactive "sFlush lines containing match for regexp: ")
   (beginning-of-buffer)
+  (read-only-mode 0)
   (flush-lines query))
 
 (defun rerun-grr ()
