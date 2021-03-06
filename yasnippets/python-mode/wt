@@ -4,4 +4,4 @@
 # --
 async with data.task.WriteTask(proto.db.$1) as task:
     await task.connect_to_id($2_id)
-    $2 = await data.$2s.read_in_task($2_id)
+    $2 = await data.$2s.read_in_task(task, $2_id)
