@@ -1,3 +1,14 @@
+(defun grepp-open-result-in-curr-window ()
+  (interactive)
+  (if (eq 1 (length (window-list)))
+      (progn
+        (compile-goto-error)
+        (recenter-top-bottom))
+    (let ((display-buffer-overriding-action
+           '(display-buffer-same-window (inhibit-same-window . nil))))
+      (next-error))
+    (recenter-top-bottom)))
+
 (defun grepp-open-result-in-ace-window ()
   "Use ‘ace-window’ to select a window to display the grep+ result."
   (interactive)
@@ -16,13 +27,15 @@
           (compile-goto-error))
         (recenter-top-bottom)))))
 
-(define-key grep-mode-map (kbd "RET") 'grepp-open-result-in-ace-window)
-(define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-ace-window)
+(define-key grep-mode-map (kbd "RET") 'grepp-open-result-in-curr-window)
+(define-key grep-mode-map (kbd "C-RET") 'grepp-open-result-in-curr-window)
+(define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-curr-window)
+(define-key grep-mode-map (kbd "C-M-RET") 'grepp-open-result-in-curr-window)
 
 (defun grr-helper (grr-name query query-fn same-window)
   (interactive)
-  (unless (or (eq 1 (length (window-list))) same-window)
-    (ace-select-window))
+  ;;(unless (or (eq 1 (length (window-list))) same-window)
+  ;;  (ace-select-window))
 
   ;; grr doesn't need this
   (setq-default grep-use-null-device nil)

@@ -27,8 +27,9 @@
 ;; git ;;
 ;;;;;;;;;
 
-(global-set-key (kbd "C-c g s") 'magit-status)
-(global-set-key (kbd "C-c g b") 'magit-blame)
+(global-set-key (kbd "M-g M-s") 'magit-status)
+(global-set-key (kbd "M-g M-b") 'magit-blame)
+(global-set-key (kbd "M-g M-l") 'magit-log)
 (require 'git-link)
 (after! git-link
   (setq-default git-link-use-commit t))
