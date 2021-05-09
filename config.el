@@ -34,6 +34,27 @@
 (after! git-link
   (setq-default git-link-use-commit t))
 
+(defun magit-blame-get-github-url ()
+  (let ((hash (oref (magit-current-blame-chunk) orig-rev)))
+    (format "https://github.com/quip/quip/commit/%s" hash)))
+
+(defun magit-blame-open-commit-in-github ()
+  (interactive)
+  (browse-url (magit-blame-get-github-url)))
+
+(defun magit-blame-copy-commit-github-url ()
+  (interactive)
+  (progn
+    (let ((url (magit-blame-get-github-url)))
+      (kill-new url)
+      (message url))))
+
+(after! magit
+  (define-key magit-blame-mode-map "o" 'magit-blame-open-commit-in-github)
+  (define-key magit-blame-mode-map "w" 'magit-blame-copy-commit-github-url)
+  (define-key magit-blame-mode-map "u" 'magit-blame-copy-commit-github-url))
+
+
 ;;;;;;;;;;;;;
 ;; editing ;;
 ;;;;;;;;;;;;;
