@@ -1,4 +1,4 @@
-(defun grepp-open-result-in-curr-window ()
+(defun grepp-open-result-in-curr-window2 ()
   (interactive)
   (if (eq 1 (length (window-list)))
       (progn
@@ -6,7 +6,7 @@
         (recenter-top-bottom))
     (let ((display-buffer-overriding-action
            '(display-buffer-same-window (inhibit-same-window . nil))))
-      (next-error))
+      (compile-goto-error))
     (recenter-top-bottom)))
 
 (defun grepp-open-result-in-ace-window ()
@@ -27,10 +27,7 @@
           (compile-goto-error))
         (recenter-top-bottom)))))
 
-(define-key grep-mode-map (kbd "RET") 'grepp-open-result-in-curr-window)
-(define-key grep-mode-map (kbd "C-RET") 'grepp-open-result-in-curr-window)
-(define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-curr-window)
-(define-key grep-mode-map (kbd "C-M-RET") 'grepp-open-result-in-curr-window)
+(define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-curr-window2)
 
 (defun grr-helper (grr-name query query-fn same-window)
   (interactive)
@@ -50,16 +47,12 @@
   (message "setting read-only-mode 0 [START]")
   (read-only-mode 0)
   (message "setting read-only-mode 0 [DONE]")
-  (message (current-buffer))
-  (flush-lines "-*- mode: grep; default-directory:")
-  (flush-lines "Grep started at")
-  (flush-lines "\n")
-  ;; (leave the line that contains the command that was run)
-  (flush-lines "Grep finished with matches found at")
   (beginning-of-buffer)
 
   ;; update buffer-local variables so that we can easily rerun the query
+  (message "a")
   (setq buffer-local-grr-query query)
+  (message "b")
   (setq buffer-local-grr-query-fn query-fn)
   (message "reached end"))
 
@@ -114,8 +107,8 @@
   (format "%s
 ^ ^ ^ ^  Filtering     | ^ ^ Buffers  ^^| ^ ^Other
 ^-^-^-^----------------|-^-^----------^^|-^-^-----
-_k_/_i_: keep/include  | _+_/_n_: new   | _r_: rerun
-_f_/_e_: flush/exclude | _g_: grep    ^^| _q_: quit
+_k_/_i_: keep/include  | _+_/_n_: new   | _r_ ^ ^: rerun
+_f_/_e_: flush/exclude | _g_: grep    ^^| _q_/_h_: quit
 ^ ^ ^ ^                | _b_: buffers ^^|
 " (propertize "Grep+ Hydra" 'face `(:box t :weight bold)))
   ("k" keep-lines-all :exit t)
@@ -129,6 +122,7 @@ _f_/_e_: flush/exclude | _g_: grep    ^^| _q_: quit
   ("b" grepp-choose-grep-buffer :exit t)
   ("r" rerun-grr :exit t)
 
+  ("h" nil :exit t)
   ("q" nil :exit t))
 (define-key grep-mode-map "h" 'grepp-hydra/body) ;; [h]elp / [h]ydra
 
