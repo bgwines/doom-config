@@ -27,9 +27,6 @@
 ;; git ;;
 ;;;;;;;;;
 
-(global-set-key (kbd "M-g M-s") 'magit-status)
-(global-set-key (kbd "M-g M-b") 'magit-blame)
-(global-set-key (kbd "M-g M-l") 'magit-log)
 (require 'git-link)
 (after! git-link
   (setq-default git-link-use-commit t))
@@ -49,10 +46,18 @@
       (kill-new url)
       (message url))))
 
+(require 'magit)
 (after! magit
   (define-key magit-blame-mode-map "o" 'magit-blame-open-commit-in-github)
   (define-key magit-blame-mode-map "w" 'magit-blame-copy-commit-github-url)
-  (define-key magit-blame-mode-map "u" 'magit-blame-copy-commit-github-url))
+  (define-key magit-blame-mode-map "u" 'magit-blame-copy-commit-github-url)
+  ;; undo the global-set-key
+  ;;(define-key magit-mode-map "<tab>" 'magit-section-cycle)
+  (setq magit-refresh-status-buffer nil)
+  (global-set-key (kbd "M-g M-s") 'magit-status)
+  (global-set-key (kbd "M-g M-b") 'magit-blame)
+  (global-set-key (kbd "M-g M-l") 'magit-log)
+)
 
 
 ;;;;;;;;;;;;;
@@ -60,6 +65,10 @@
 ;;;;;;;;;;;;;
 
 (load-helper-file "new-scratch.el")
+
+;; faster up and down
+(global-set-key (kbd "M-n") 'forward-paragraph)
+(global-set-key (kbd "M-p") 'backward-paragraph)
 
 ;; undo
 (global-set-key (kbd "M-_") 'undo-tree-redo)
@@ -133,7 +142,7 @@
 
 ;; spaces, not tabs
 (setq-default indent-tabs-mode nil)
-(global-set-key (kbd "<tab>") 'indent-for-tab-command)
+;;(global-set-key (kbd "<tab>") 'indent-for-tab-command)
 
 ;; Always add newline at end of file.
 (setq require-final-newline t)
