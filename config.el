@@ -8,6 +8,8 @@
 (require 'symbol-navigation-hydra)
 (after! symbol-navigation-hydra
   (global-set-key (kbd "M-t") 'symbol-navigation-hydra-engage-hydra)
+  (setq-default ahs-highlight-all-windows nil)
+  (setq-default ahs-highlight-upon-window-switch nil)
   (setq-default ahs-case-fold-search nil)
   (setq-default ahs-default-range 'ahs-range-whole-buffer)
   (setq-default ahs-idle-interval 999999999.0)
