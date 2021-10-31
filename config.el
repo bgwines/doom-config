@@ -1,5 +1,5 @@
 (defun load-helper-file (filename)
-  (load-file (format "~/doom-config/helpers/%s" filename)))
+  (load-file (format "~/.doom.d/helpers/%s" filename)))
 
 ;;;;;;;;;;;;;;
 ;; SN Hydra ;;
