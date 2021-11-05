@@ -9,6 +9,7 @@
 (after! symbol-navigation-hydra
   (global-set-key (kbd "M-t") 'symbol-navigation-hydra-engage-hydra)
   (setq-default ahs-highlight-all-windows nil)
+  (setq-default ahs-enable-focus-hooks nil)
   (setq-default ahs-highlight-upon-window-switch nil)
   (setq-default ahs-case-fold-search nil)
   (setq-default ahs-default-range 'ahs-range-whole-buffer)
@@ -67,6 +68,9 @@
 ;;;;;;;;;;;;;
 
 (load-helper-file "new-scratch.el")
+
+;; rebind cmd-v away from kill-buffer
+(global-set-key (kbd "s-k") 'yank)
 
 ;; faster up and down
 (global-set-key (kbd "M-n") 'forward-paragraph)
@@ -144,7 +148,7 @@
 
 ;; spaces, not tabs
 (setq-default indent-tabs-mode nil)
-;;(global-set-key (kbd "<tab>") 'indent-for-tab-command)
+(global-set-key (kbd "<tab>") 'indent-for-tab-command)
 
 ;; Always add newline at end of file.
 (setq require-final-newline t)
