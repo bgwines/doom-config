@@ -357,17 +357,33 @@
 ;; flycheck ;;
 ;;;;;;;;;;;;;;
 
-(defun disable-flycheck-mode ()
-  (interactive)
-  (flycheck-mode -1)
-  (global-flycheck-mode -1))
-(add-hook 'prog-mode-hook 'disable-flycheck-mode)
-(add-hook 'python-mode-hook 'disable-flycheck-mode)
-(remove-hook 'prog-mode-hook 'flycheck-mode)
-(remove-hook 'python-mode-hook 'flycheck-mode)
+;; (defun disable-flycheck-mode ()
+;;   (interactive)
+;;   (flycheck-mode -1)
+;;   (global-flycheck-mode -1))
+;; (add-hook 'prog-mode-hook 'disable-flycheck-mode)
+;; (add-hook 'python-mode-hook 'disable-flycheck-mode)
+;; (remove-hook 'prog-mode-hook 'flycheck-mode)
+;; (remove-hook 'python-mode-hook 'flycheck-mode)
 
 ;; even if it is somehow enabled, all checkers will be disabled
-(setq-default flycheck-disabled-checkers 'flycheck-checkers)
+;; (setq-default flycheck-disabled-checkers 'flycheck-checkers)
+
+;;;;;;;;;;;;;
+;; Haskell ;;
+;;;;;;;;;;;;;
+
+(require 'lsp)
+(require 'lsp-haskell)
+(after! (:and lsp lsp-haskell)
+  ;; Hooks so haskell and literate haskell major modes trigger LSP setup
+  (add-hook 'haskell-mode-hook #'lsp)
+  (add-hook 'haskell-literate-mode-hook #'lsp))
+
+(load-helper-file "hs-lint.el")
+(defun hlint-hook ()
+  (local-set-key "\C-cl" 'hs-lint))
+(add-hook 'haskell-mode-hook 'hlint-hook)
 
 ;;;;;;;;;;;;;;;
 ;; cosmetics ;;
