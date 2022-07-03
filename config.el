@@ -381,9 +381,8 @@
   (add-hook 'haskell-literate-mode-hook #'lsp))
 
 (load-helper-file "hs-lint.el")
-(defun hlint-hook ()
-  (local-set-key "\C-cl" 'hs-lint))
-(add-hook 'haskell-mode-hook 'hlint-hook)
+(after! haskell-mode
+  (define-key haskell-mode-map (kbd "C-c C-h") 'hs-lint))
 
 ;;;;;;;;;;;;;;;
 ;; cosmetics ;;
