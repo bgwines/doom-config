@@ -1,6 +1,13 @@
 (defun load-helper-file (filename)
   (load-file (format "~/.doom.d/helpers/%s" filename)))
 
+;;;;;;;;;;;;;;;;;
+;; major modes ;;
+;;;;;;;;;;;;;;;;;
+
+(add-to-list 'auto-mode-alist '("\\.tftpl\\'" . terraform-mode))
+(add-to-list 'auto-mode-alist '("\\.hack\\'" . php-mode))
+
 ;;;;;;;;;;;;;;
 ;; SN Hydra ;;
 ;;;;;;;;;;;;;;
@@ -290,14 +297,14 @@
 ;;;;;;;;;;;;;;;;;;;
 
 ;; Makes duplicate files show up as application.py|api instead of the <2>.
-(setq doom-modeline-buffer-file-name-style 'relative-to-project)
-(setq doom-modeline-major-mode-icon t)
-(setq doom-modeline-major-mode-color-icon t)
-(setq doom-modeline-icon (display-graphic-p))
-(setq doom-modeline-buffer-state-icon t)
-(setq doom-modeline-buffer-modification-icon t)
-(setq doom-modeline-minor-modes nil)
-(setq doom-modeline-buffer-encoding nil)
+;; (setq doom-modeline-buffer-file-name-style 'relative-to-project)
+;; (setq doom-modeline-major-mode-icon t)
+;; (setq doom-modeline-major-mode-color-icon t)
+;; (setq doom-modeline-icon (display-graphic-p))
+;; (setq doom-modeline-buffer-state-icon t)
+;; (setq doom-modeline-buffer-modification-icon t)
+;; (setq doom-modeline-minor-modes nil)
+;; (setq doom-modeline-buffer-encoding nil)
 
 ;; display isearch counts (e.g. currently focused on search result i/n)
 (global-anzu-mode +1)
@@ -326,6 +333,15 @@
 ;; assorted ;;
 ;;;;;;;;;;;;;;
 
+;; profile startup latency if enabled
+;; https://github.com/doomemacs/doomemacs/issues/4498#issuecomment-753692913
+(when init-file-debug
+  (require 'benchmark-init)
+  (add-hook 'doom-first-input-hook #'benchmark-init/deactivate))
+
+;; splash screen
+(setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-color.png"))
+
 ;; yapf (don't auto-perform this upon save since it locks up emacs for a
 ;; sec)
 (load-helper-file "yapf.el")
@@ -346,12 +362,13 @@
 ;; yasnippet ;;
 ;;;;;;;;;;;;;;;
 
-(require 'yasnippet)
-(after! yasnippet
-  (setq yas-snippet-dirs
-        '("~/doom-config/yasnippets"))
-  (add-hook 'prog-mode-hook #'yas-minor-mode)
-  (add-hook 'prog-mode-hook #'yas-reload-all))
+;; disabled due to high impact on startup performance
+;; (require 'yasnippet)
+;; (after! yasnippet
+;;   (setq yas-snippet-dirs
+;;         '("~/doom-config/yasnippets"))
+;;   (add-hook 'prog-mode-hook #'yas-minor-mode)
+;;   (add-hook 'prog-mode-hook #'yas-reload-all))
 
 ;;;;;;;;;;;;;;
 ;; flycheck ;;
@@ -373,16 +390,17 @@
 ;; Haskell ;;
 ;;;;;;;;;;;;;
 
-(require 'lsp)
-(require 'lsp-haskell)
-(after! (:and lsp lsp-haskell)
-  ;; Hooks so haskell and literate haskell major modes trigger LSP setup
-  (add-hook 'haskell-mode-hook #'lsp)
-  (add-hook 'haskell-literate-mode-hook #'lsp))
-
-(load-helper-file "hs-lint.el")
-(after! haskell-mode
-  (define-key haskell-mode-map (kbd "C-c C-h") 'hs-lint))
+;; disabled due to high impact on startup performance
+;; (require 'lsp)
+;; (require 'lsp-haskell)
+;; (after! (:and lsp lsp-haskell)
+;;   ;; Hooks so haskell and literate haskell major modes trigger LSP setup
+;;   (add-hook 'haskell-mode-hook #'lsp)
+;;   (add-hook 'haskell-literate-mode-hook #'lsp))
+;;
+;; (load-helper-file "hs-lint.el")
+;; (after! haskell-mode
+;;   (define-key haskell-mode-map (kbd "C-c C-h") 'hs-lint))
 
 ;;;;;;;;;;;;;;;
 ;; cosmetics ;;

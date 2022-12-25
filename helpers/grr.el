@@ -29,7 +29,7 @@
 
 (define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-curr-window2)
 
-(defun grr-helper (grr-name query query-fn same-window)
+(defun grr-helper (grr-name query query-fn same-window repo)
   (interactive)
   ;;(unless (or (eq 1 (length (window-list))) same-window)
   ;;  (ace-select-window))
@@ -40,7 +40,7 @@
   (defun display-same-window (buffer _)
     (display-buffer-same-window buffer nil))
   (setq-default display-buffer-overriding-action '(display-same-window . nil))
-  (grep (format "~/quip/bin/%s %s" grr-name query))
+  (grep (format "~/%s/bin/%s %s" repo grr-name query))
   (setq-default display-buffer-overriding-action '(nil . nil))
 
   (grepp-rename-buffer-to-last-no-confirm)
@@ -58,19 +58,19 @@
 
 (defun grr (query &optional same-window)
   (interactive "sQuery: ")
-  (grr-helper "absolute-grr" query 'grr same-window))
+  (grr-helper "absolute-grr" query 'grr same-window "quip"))
 
 (defun grr-server (query &optional same-window)
   (interactive "sQuery: ")
-  (grr-helper "absolute-grr-server" query 'grr-server same-window))
+  (grr-helper "absolute-grr-server" query 'grr-server same-window "quip"))
 
 (defun grr-proto (query &optional same-window)
   (interactive "sQuery: ")
-  (grr-helper "absolute-grr-proto" query 'grr-proto same-window))
+  (grr-helper "absolute-grr-proto" query 'grr-proto same-window "quip"))
 
-(defun grr-ekm (query &optional same-window)
+(defun grr-devops (query &optional same-window)
   (interactive "sQuery: ")
-  (grr-helper "absolute-grr-ekm" query 'grr-ekm same-window))
+  (grr-helper "absolute-grr" query 'grr-devops same-window "devops"))
 
 (defun keep-lines-all (query)
   (interactive "sKeep lines containing match for regexp: ")
@@ -129,7 +129,7 @@ _f_/_e_: flush/exclude | _g_: grep    ^^| _q_/_h_: quit
 (global-set-key (kbd "M-g M-r M-r") 'grr)
 (global-set-key (kbd "M-g M-r M-s") 'grr-server)
 (global-set-key (kbd "M-g M-r M-p") 'grr-proto)
-(global-set-key (kbd "M-g M-r M-e") 'grr-ekm)
+(global-set-key (kbd "M-g M-r M-d") 'grr-devops)
 
 (setq-default grep-highlight-matches t)
 (setq-default grepp-default-comment-line-regexp ":[0-9]+: *#")
