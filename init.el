@@ -60,8 +60,8 @@
        ;;objed             ; text object editing for the innocent
        ;;parinfer          ; turn lisp into python, sort of
        ;;rotate-text       ; cycle region at point between text candidates
-       ;; this if this is yasnippet, it impacts startup performance
-       ;;snippets          ; my elves. They type so I don't have to
+       ;; this is yasnippet; it impacts startup performance negatively but I need it for now
+       snippets          ; my elves. They type so I don't have to
        ;;word-wrap         ; soft wrapping with language-aware indent
 
        :emacs

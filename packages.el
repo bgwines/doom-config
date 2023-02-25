@@ -13,7 +13,7 @@
 ;; in use, but maybe could replace with vanilla ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (package! anzu)
-;;(package! doom-modeline)
+(package! doom-modeline)
 (package! fastnav)
 (package! git-link)
 (package! grep+)

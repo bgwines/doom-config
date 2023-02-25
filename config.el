@@ -297,14 +297,17 @@
 ;;;;;;;;;;;;;;;;;;;
 
 ;; Makes duplicate files show up as application.py|api instead of the <2>.
-;; (setq doom-modeline-buffer-file-name-style 'relative-to-project)
-;; (setq doom-modeline-major-mode-icon t)
-;; (setq doom-modeline-major-mode-color-icon t)
-;; (setq doom-modeline-icon (display-graphic-p))
-;; (setq doom-modeline-buffer-state-icon t)
-;; (setq doom-modeline-buffer-modification-icon t)
-;; (setq doom-modeline-minor-modes nil)
-;; (setq doom-modeline-buffer-encoding nil)
+(require 'doom-modeline)
+(setq doom-modeline-buffer-file-name-style 'relative-to-project)
+(setq doom-modeline-major-mode-icon t)
+(setq doom-modeline-major-mode-color-icon t)
+(setq doom-modeline-icon (display-graphic-p))
+(setq doom-modeline-buffer-state-icon t)
+(setq doom-modeline-buffer-modification-icon t)
+(setq doom-modeline-minor-modes nil)
+(setq doom-modeline-buffer-encoding nil)
+;; if it doesn't appear, run M-x doom-modeline-mode (maybe should just run that
+;; in here?)
 
 ;; display isearch counts (e.g. currently focused on search result i/n)
 (global-anzu-mode +1)
@@ -333,6 +336,10 @@
 ;; assorted ;;
 ;;;;;;;;;;;;;;
 
+;; temp
+;;(with-eval-after-load 'docker-tramp
+;;  (unload-feature 'docker-tramp))
+
 ;; profile startup latency if enabled
 ;; https://github.com/doomemacs/doomemacs/issues/4498#issuecomment-753692913
 (when init-file-debug
@@ -341,6 +348,8 @@
 
 ;; splash screen
 (setq fancy-splash-image (concat doom-private-dir "splash/doom-emacs-color.png"))
+
+(global-set-key (kbd "M-o") 'new-scratch)
 
 ;; yapf (don't auto-perform this upon save since it locks up emacs for a
 ;; sec)
@@ -362,13 +371,13 @@
 ;; yasnippet ;;
 ;;;;;;;;;;;;;;;
 
-;; disabled due to high impact on startup performance
-;; (require 'yasnippet)
-;; (after! yasnippet
-;;   (setq yas-snippet-dirs
-;;         '("~/doom-config/yasnippets"))
-;;   (add-hook 'prog-mode-hook #'yas-minor-mode)
-;;   (add-hook 'prog-mode-hook #'yas-reload-all))
+;; TODO: disabled due to high impact on startup performance
+(require 'yasnippet)
+(after! yasnippet
+  (setq yas-snippet-dirs
+        '("~/doom-config/yasnippets"))
+  (add-hook 'prog-mode-hook #'yas-minor-mode)
+  (add-hook 'prog-mode-hook #'yas-reload-all))
 
 ;;;;;;;;;;;;;;
 ;; flycheck ;;
