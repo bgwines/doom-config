@@ -298,14 +298,17 @@
 
 ;; Makes duplicate files show up as application.py|api instead of the <2>.
 (require 'doom-modeline)
-(setq doom-modeline-buffer-file-name-style 'relative-to-project)
-(setq doom-modeline-major-mode-icon t)
-(setq doom-modeline-major-mode-color-icon t)
-(setq doom-modeline-icon (display-graphic-p))
-(setq doom-modeline-buffer-state-icon t)
-(setq doom-modeline-buffer-modification-icon t)
-(setq doom-modeline-minor-modes nil)
-(setq doom-modeline-buffer-encoding nil)
+(after! doom-modeline
+  (doom-modeline-mode t)
+  (column-number-mode t)
+  (setq doom-modeline-buffer-file-name-style 'relative-to-project)
+  (setq doom-modeline-major-mode-icon t)
+  (setq doom-modeline-major-mode-color-icon t)
+  (setq doom-modeline-icon (display-graphic-p))
+  (setq doom-modeline-buffer-state-icon t)
+  (setq doom-modeline-buffer-modification-icon t)
+  (setq doom-modeline-minor-modes nil)
+  (setq doom-modeline-buffer-encoding nil))
 ;; if it doesn't appear, run M-x doom-modeline-mode (maybe should just run that
 ;; in here?)
 

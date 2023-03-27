@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: cccd
+# key: cccd
+# --
+async with core.coro.concurrent_dict() as batch:
+    $1

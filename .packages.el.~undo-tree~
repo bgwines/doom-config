@@ -1,0 +1,5 @@
+(undo-tree-save-format-version . 1)
+"2f1046ebce5ed71c03640c1e35a52d6b521d18db"
+[nil nil nil nil (25523 10157 536976 0) 0 nil]
+([nil current ((#(";" 0 1 (fontified t ws-butler-chg delete face font-lock-comment-delimiter-face)) . 380) (#(";" 0 1 (fontified t face font-lock-comment-delimiter-face)) . 380) (t 25512 51302 402470 627000)) nil (25523 10157 536971 0) 0 nil])
+nil

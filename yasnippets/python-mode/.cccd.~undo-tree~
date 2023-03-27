@@ -1,0 +1,7 @@
+(undo-tree-save-format-version . 1)
+"17a602e996bf112c4a5b6c9a4928788bc0b86a53"
+[nil nil nil nil (25624 54026 212371 0) 0 nil]
+([nil nil ((nil rear-nonsticky nil 103 . 104) (nil fontified t 103 . 104) (nil fontified t 102 . 103) (nil fontified t 101 . 102) (nil fontified t 97 . 101) (nil fontified t 96 . 97) (nil fontified t 95 . 96) (nil fontified t 91 . 95) (nil fontified t 90 . 91) (nil fontified t 89 . 90) (nil fontified t 87 . 89) (nil fontified t 84 . 87) (nil fontified t 63 . 84) (nil fontified t 54 . 63) (nil fontified t 53 . 54) (nil fontified t 52 . 53) (nil fontified t 48 . 52) (nil fontified t 47 . 48) (nil fontified t 44 . 47) (nil fontified t 37 . 44) (nil fontified t 36 . 37) (nil fontified t 33 . 36) (nil fontified t 25 . 33) (nil fontified t 24 . 25) (nil fontified t 1 . 24) (1 . 104) (t . -1)) nil (25624 54026 212368 0) 0 nil])
+([nil nil ((apply activate-cursor-for-undo 624) (48 . 49) (apply deactivate-cursor-after-undo 624) (36 . 37)) nil (25624 54026 212363 0) 0 nil])
+([nil current ((86 . 91)) nil (25624 54026 212357 0) 0 nil])
+nil

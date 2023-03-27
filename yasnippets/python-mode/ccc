@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: ccc
+# key: ccc
+# --
+async with core.coro.concurrent() as batch:
+    batch.$1 = $2
+    batch.$3 = $4
