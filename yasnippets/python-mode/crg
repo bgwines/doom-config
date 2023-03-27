@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: crg
+# key: crg
+# --
+await core.runtime.gather($1)

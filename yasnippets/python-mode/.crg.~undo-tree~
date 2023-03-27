@@ -1,0 +1,10 @@
+(undo-tree-save-format-version . 1)
+"4f791522bd24fcf539201fe78263e1e37f1c9e41"
+[nil nil nil nil (25719 45472 672454 0) 0 nil]
+([nil nil ((apply yas--take-care-of-redo #s(yas--snippet nil (#s(yas--field 1 33 36 nil (#s(yas--mirror 44 47 (yas--key-from-desc yas-text) #s(yas--field 2 44 47 nil nil nil nil #8) #s(yas--exit 53 nil) nil)) nil t #s(yas--field 2 44 47 nil nil nil nil #s(yas--mirror 44 47 (yas--key-from-desc yas-text) #7 #s(yas--exit 53 nil) nil))) #s(yas--field 2 44 47 nil nil nil nil #s(yas--mirror 44 47 (yas--key-from-desc yas-text) #6 #s(yas--exit 53 nil) nil))) #s(yas--exit 53 nil) 1 nil #s(yas--field 2 44 47 nil nil nil nil #s(yas--mirror 44 47 (yas--key-from-desc yas-text) #5 #s(yas--exit 53 nil) nil)) nil nil)) (1 . 47)) nil (25719 45472 672453 0) 0 nil])
+([nil nil ((#("cr" 0 2 (fontified nil ws-butler-chg chg face font-lock-comment-face)) . 47) (44 . 47) (35 . 36) (#("c" 0 1 (fontified nil ws-butler-chg chg face font-lock-comment-face)) . 45) (43 . 45) (34 . 35) (42 . 43) (33 . 34)) nil (25719 45472 672451 0) 0 nil])
+([nil nil ((apply yas--snippet-revive 1 53 #s(yas--snippet nil (#s(yas--field 1 33 36 nil (#s(yas--mirror 44 47 (yas--key-from-desc yas-text) #s(yas--field 2 44 47 nil nil nil nil #8) #s(yas--exit 53 nil) nil)) nil t #s(yas--field 2 44 47 nil nil nil nil #s(yas--mirror 44 47 (yas--key-from-desc yas-text) #7 #s(yas--exit 53 nil) nil))) #s(yas--field 2 44 47 nil nil nil nil #s(yas--mirror 44 47 (yas--key-from-desc yas-text) #6 #s(yas--exit 53 nil) nil))) #s(yas--exit 53 nil) 1 nil #s(yas--field 2 44 47 nil nil nil nil #s(yas--mirror 44 47 (yas--key-from-desc yas-text) #5 #s(yas--exit 53 nil) nil)) nil nil))) nil (25719 45472 672449 0) 0 nil])
+([nil nil ((53 . 74)) nil (25719 45472 672448 0) 0 nil])
+([nil nil ((78 . 80) (#("(" 0 1 (ws-butler-chg chg fontified nil)) . -78) (74 . 79)) nil (25719 45472 672446 0) 0 nil])
+([nil current ((79 . 81)) nil (25719 45472 672441 0) 0 nil])
+nil
