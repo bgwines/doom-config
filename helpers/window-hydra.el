@@ -13,7 +13,7 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←  ^ ^          | _o_/_k_: other
 ^ ^             | ^ ^         _p_: ↑ | _P_: ↑  ^ ^          | _O_/_1_: all others
 ^ ^             | _m_: multi  _n_: ↓ | _N_: ↓  ^ ^          | _q_/_,_: (quit)
 "
-  ("|" split-window-right :exit window-hydra-should-exit)
+  ("|" split-window-right-preserving-start :exit window-hydra-should-exit)
   ("-" split-window-below :exit window-hydra-should-exit)
 
   ("P" hydra-move-splitter-up)
@@ -60,3 +60,11 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←  ^ ^          | _o_/_k_: other
   "Clean up any state that needs to be cleaned up."
   (interactive)
   (setq window-hydra-should-exit nil))
+
+(defun split-window-right-preserving-start ()
+  (interactive)
+  (let* ((start (window-start (selected-window)))
+         (new-window (split-window-right)))
+    (set-window-start new-window start nil)
+    )
+  )
