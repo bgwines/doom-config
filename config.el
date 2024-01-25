@@ -39,7 +39,9 @@
 
 (require 'git-link)
 (after! git-link
-  (setq-default git-link-use-commit t))
+  (setq-default git-link-use-commit t)
+  (global-set-key (kbd "M-g M-l") 'git-link))
+
 
 (defun magit-blame-get-github-url ()
   (let ((hash (oref (magit-current-blame-chunk) orig-rev)))
@@ -66,7 +68,7 @@
   (setq magit-refresh-status-buffer nil)
   (global-set-key (kbd "M-g M-s") 'magit-status)
   (global-set-key (kbd "M-g M-b") 'magit-blame)
-  (global-set-key (kbd "M-g M-l") 'magit-log)
+  ;;(global-set-key (kbd "M-g M-l") 'magit-log)
 )
 
 
@@ -354,8 +356,13 @@
 
 (global-set-key (kbd "M-o") 'new-scratch)
 
-;; yapf (don't auto-perform this upon save since it locks up emacs for a
-;; sec)
+;; yapf and isort (don't auto-perform these upon save since it locks up emacs
+;; for a sec)
+(load-helper-file "isort.el")
+(global-set-key (kbd "C-M-i") 'isort-current-buffer)
+(after! anaconda-mode
+  (define-key anaconda-mode-map (kbd "C-M-i") 'isort-current-buffer))
+
 (load-helper-file "yapf.el")
 (global-set-key (kbd "C-M-y") 'yapf-current-buffer)
 
