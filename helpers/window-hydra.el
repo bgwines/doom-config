@@ -67,4 +67,7 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←  ^ ^          | _o_/_k_: other
          (new-window (split-window-right)))
     (set-window-start new-window start nil)
     )
-  )
+  ;; wide monitor in the office allows 3 panes; auto-rebalance when splitting to
+  ;; 3 because that's always preferred.
+  (when (eq 3 (length (aw-window-list)))
+    (balance-windows)))
