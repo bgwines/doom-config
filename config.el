@@ -1,5 +1,5 @@
 (defun load-helper-file (filename)
-  (load-file (format "~/.doom.d/helpers/%s" filename)))
+  (load-file (format "~/.config/doom/helpers/%s" filename)))
 
 ;;;;;;;;;;;;;;;;;
 ;; major modes ;;
@@ -121,7 +121,8 @@
 (setq mc/always-run-for-all t)
 
 ;; expand-region
-(global-set-key (kbd "M-e") 'er/expand-region)
+;; has issues in Emacs 29
+;;(global-set-key (kbd "M-e") 'er/expand-region)
 
 ;;;;;;;;;;;;;;
 ;; deletion ;;
@@ -340,6 +341,9 @@
 ;;;;;;;;;;;;;;
 ;; assorted ;;
 ;;;;;;;;;;;;;;
+
+(after! pixel-scroll-precision-mode
+  (pixel-scroll-precision-mode))
 
 ;; temp
 ;;(with-eval-after-load 'docker-tramp

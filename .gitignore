@@ -1,2 +1,3 @@
 .DS_Store
 flycheck_config.el
+*~undo-tree~*
