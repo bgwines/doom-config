@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: cod
-# key: cod
-# --
-define("$1", default=$2, type=$3, dynamic=$4, category="$5")

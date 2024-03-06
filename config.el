@@ -89,6 +89,7 @@
 (global-set-key (kbd "M-_") 'undo-tree-redo)
 
 ;; line numbers
+(global-display-line-numbers-mode 1)
 (load-helper-file "goto-line.el")
 (global-set-key (kbd "M-g M-g") 'hydra-goto-line/body)
 (global-display-line-numbers-mode -1)
@@ -121,8 +122,7 @@
 (setq mc/always-run-for-all t)
 
 ;; expand-region
-;; has issues in Emacs 29
-;;(global-set-key (kbd "M-e") 'er/expand-region)
+(global-set-key (kbd "M-e") 'er/expand-region)
 
 ;;;;;;;;;;;;;;
 ;; deletion ;;
@@ -389,7 +389,7 @@
 (require 'yasnippet)
 (after! yasnippet
   (setq yas-snippet-dirs
-        '("~/doom-config/yasnippets"))
+        '("~/.config/doom/yasnippets"))
   (add-hook 'prog-mode-hook #'yas-minor-mode)
   (add-hook 'prog-mode-hook #'yas-reload-all))
 

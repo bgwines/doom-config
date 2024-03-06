@@ -4,8 +4,8 @@
   (recenter-top-bottom))
 
 (defhydra hydra-goto-line (goto-map ""
-                           :pre (linum-mode 1)
-                           :post (linum-mode -1))
+                           :pre (global-display-line-numbers-mode 1)
+                           :post (global-display-line-numbers-mode -1))
   "goto-line"
   ("g" goto-line-and-recenter "go" :exit t)
   ("RET" goto-line-and-recenter "go" :exit t)

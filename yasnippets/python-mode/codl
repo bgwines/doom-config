@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: codl
+# key: codl
+# --
+define("$1", default=$2, type=$3, dynamic=$4, category="$5", longevity=proto.options.LONGLIVED, description="$6")

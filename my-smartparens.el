@@ -1,4 +1,4 @@
-;;; ~/doom-config/my-smartparens.el -*- lexical-binding: t; -*-
+;;; ~/.config/doom/my-smartparens.el -*- lexical-binding: t; -*-
 
 (define-key sp-keymap (kbd "C-M-f") 'sp-forward-sexp)
 (define-key sp-keymap (kbd "C-M-b") 'sp-backward-sexp)
