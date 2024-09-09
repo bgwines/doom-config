@@ -1,0 +1,16 @@
+(undo-tree-save-format-version . 1)
+"c5bfe401e32a7a96c4e94a710ec9894e4c8f58a0"
+[nil nil nil nil (25927 62279 624644 0) 0 nil]
+([nil nil ((112 . 114) (t 24931 31902 787139 568000)) nil (25927 62279 624642 0) 0 nil])
+([nil nil ((nil rear-nonsticky nil 117 . 118) (nil fontified nil 114 . 118) (114 . 118)) nil (25927 62279 624641 0) 0 nil])
+([nil nil ((nil rear-nonsticky nil 166 . 167) (nil fontified nil 114 . 167) (114 . 167) (#("edit" 0 3 (ws-butler-chg chg fontified t) 3 4 (ws-butler-chg chg fontified t rear-nonsticky t)) . -114) (undo-tree-id9 . -4) (undo-tree-id10 . -4) (undo-tree-id11 . -4) (undo-tree-id12 . -4)) nil (25927 62279 624640 0) 0 nil])
+([nil nil ((#(" " 0 1 (fontified t ws-butler-chg chg)) . -113) (undo-tree-id0 . -1) (undo-tree-id1 . -1) (undo-tree-id2 . -1) (undo-tree-id3 . -1) (undo-tree-id4 . -1) (undo-tree-id5 . -1) (undo-tree-id6 . -1) (undo-tree-id7 . -1) (#("," 0 1 (ws-butler-chg chg fontified t)) . -114) (undo-tree-id8 . -1) 115) nil (25927 62279 624633 0) 0 nil])
+([nil nil ((#("SHORTLIVED" 0 10 (ws-butler-chg chg fontified t)) . 138)) nil (25927 62279 624604 0) 0 nil])
+([nil nil ((139 . 141) (138 . 140) (#("\"" 0 1 (ws-butler-chg chg fontified nil)) . -138) (138 . 139)) nil (25927 62279 624598 0) 0 nil])
+([nil nil ((47 . 48) (t 25927 62279 630222 56000)) nil (25927 62292 345749 0) 0 nil])
+([nil nil ((#("n" 0 1 (fontified t ws-butler-chg chg face font-lock-comment-face)) . -47) (undo-tree-id13 . -1) (undo-tree-id14 . -1) (undo-tree-id15 . -1) (undo-tree-id16 . -1) (undo-tree-id17 . -1) (undo-tree-id18 . -1) (undo-tree-id19 . -1) (undo-tree-id20 . -1) (undo-tree-id21 . -1) (undo-tree-id22 . -1) (undo-tree-id23 . -1) (undo-tree-id24 . -1) (undo-tree-id25 . -1) 48) nil (25927 62292 345744 0) 0 nil])
+([nil nil ((#("\"" 0 1 (face font-lock-string-face fontified t)) . 138) (undo-tree-id2 . -1) (undo-tree-id3 . -1) (t 25927 62292 348103 4000)) nil (25927 62348 865350 0) 0 nil])
+([nil nil ((#("\"" 0 1 (face font-lock-string-face fontified t)) . 140) (undo-tree-id0 . -1) (undo-tree-id1 . -1)) nil (25927 62348 865342 0) 0 nil])
+([nil nil ((47 . 48) (t 25927 62348 867813 511000)) nil (25933 9137 299981 0) 0 nil])
+([nil current ((#("q" 0 1 (fontified t ws-butler-chg chg face font-lock-comment-face)) . -47) (undo-tree-id0 . -1) (undo-tree-id1 . -1) (undo-tree-id2 . -1) (undo-tree-id3 . -1) (undo-tree-id4 . -1) (undo-tree-id5 . -1) (undo-tree-id6 . -1) (undo-tree-id7 . -1) (undo-tree-id8 . -1) (undo-tree-id9 . -1) (undo-tree-id10 . -1) (undo-tree-id11 . -1) (undo-tree-id12 . -1) 48) nil (25933 9137 299976 0) 0 nil])
+nil
