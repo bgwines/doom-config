@@ -140,6 +140,9 @@
 (global-set-key (kbd "M-k") 'kill-whole-line)
 
 (set-deletion-bindings minibuffer-local-map)
+;;(after! scad-mode
+;;  (set-deletion-bindings scad-mode-map))
+
 
 (after! markdown-mode
   (set-deletion-bindings markdown-mode-map))

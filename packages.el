@@ -8,6 +8,7 @@
 (package! package-lint)
 (package! protobuf-mode)
 (package! symbol-navigation-hydra)
+(package! scad-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; in use, but maybe could replace with vanilla ;;
