@@ -10,6 +10,14 @@
 (package! symbol-navigation-hydra)
 (package! scad-mode)
 
+(use-package ultra-scroll
+  :init
+  (setq scroll-conservatively 101 ; important!
+        scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; in use, but maybe could replace with vanilla ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -24,7 +32,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; might want again one day ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(package! benchmark-init) ;; for profiling startup latency
+;;(package! benchmark-init) ;; for profiling startup latency
 ;;(package! helm-posframe)  ;; doesn't handle OSX full screen windows well
 ;;(package! compile+)  ;; used by grep+, but seems to be optional
 ;;(package! helm-ag)

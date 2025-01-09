@@ -29,7 +29,7 @@
 
 (define-key grep-mode-map (kbd "M-RET") 'grepp-open-result-in-curr-window2)
 
-(defun grr-helper (grr-name query query-fn same-window repo)
+(defun grr-helper (executable-name query caller-fn same-window repo)
   (interactive)
   ;;(unless (or (eq 1 (length (window-list))) same-window)
   ;;  (ace-select-window))
@@ -40,7 +40,7 @@
   (defun display-same-window (buffer _)
     (display-buffer-same-window buffer nil))
   (setq-default display-buffer-overriding-action '(display-same-window . nil))
-  (grep (format "~/%s/bin/%s %s" repo grr-name query))
+  (grep (format "~/%s/bin/%s %s" repo executable-name query))
   (setq-default display-buffer-overriding-action '(nil . nil))
 
   (grepp-rename-buffer-to-last-no-confirm)
@@ -50,11 +50,8 @@
   (beginning-of-buffer)
 
   ;; update buffer-local variables so that we can easily rerun the query
-  (message "a")
-  (setq buffer-local-grr-query query)
-  (message "b")
-  (setq buffer-local-grr-query-fn query-fn)
-  (message "reached end"))
+  (setq buffer-local-prev-query query)
+  (setq buffer-local-prev-caller-fn caller-fn))
 
 (defun grr (query &optional same-window)
   (interactive "sQuery: ")
@@ -72,6 +69,10 @@
   (interactive "sQuery: ")
   (grr-helper "absolute-grr" query 'grr-devops same-window "devops"))
 
+(defun mypy (&optional same-window)
+  (interactive)
+  (grr-helper "absolute-mypy" "--log-output-file=0" 'mypy same-window "quip"))
+
 (defun keep-lines-all (query)
   (interactive "sKeep lines containing match for regexp: ")
   (beginning-of-buffer)
@@ -84,22 +85,24 @@
   (read-only-mode 0)
   (flush-lines query))
 
-(defun rerun-grr ()
+(defun rerun ()
   (interactive)
-  (funcall buffer-local-grr-query-fn buffer-local-grr-query t))
+  (if (eq buffer-local-prev-caller-fn 'mypy)
+      (funcall buffer-local-prev-caller-fn t)
+      (funcall buffer-local-prev-caller-fn buffer-local-prev-query t)))
 
 (define-key grep-mode-map "k" 'keep-lines-all)
 (define-key grep-mode-map "i" 'keep-lines-all)
 (define-key grep-mode-map "f" 'flush-lines-all)
 (define-key grep-mode-map "e" 'flush-lines-all)
-(define-key grep-mode-map "r" 'rerun-grr)
+(define-key grep-mode-map "r" 'rerun)
 (define-key grep-mode-map (kbd "C-k") 'delete-line-no-kill)
 (define-key grep-mode-map (kbd "M-k") 'delete-whole-line-no-kill)
 
-(setq buffer-local-grr-query-fn nil)
-(setq buffer-local-grr-query nil)
-(make-local-variable 'buffer-local-grr-query-fn)
-(make-local-variable 'buffer-local-grr-query)
+(setq buffer-local-prev-caller-fn nil)
+(setq buffer-local-prev-query nil)
+(make-local-variable 'buffer-local-prev-caller-fn)
+(make-local-variable 'buffer-local-prev-query)
 
 ;; Surfaces the more useful commands (all of these are already in the
 ;; mode-map)
@@ -120,7 +123,7 @@ _f_/_e_: flush/exclude | _g_: grep    ^^| _q_/_h_: quit
   ("n" grepp-new-grep-buffer :exit t)
   ("g" grep :exit t)
   ("b" grepp-choose-grep-buffer :exit t)
-  ("r" rerun-grr :exit t)
+  ("r" rerun :exit t)
 
   ("h" nil :exit t)
   ("q" nil :exit t))
@@ -130,6 +133,7 @@ _f_/_e_: flush/exclude | _g_: grep    ^^| _q_/_h_: quit
 (global-set-key (kbd "M-g M-r M-s") 'grr-server)
 (global-set-key (kbd "M-g M-r M-p") 'grr-proto)
 (global-set-key (kbd "M-g M-r M-d") 'grr-devops)
+(global-set-key (kbd "M-g M-y") 'mypy)
 
 (setq-default grep-highlight-matches t)
 (setq-default grepp-default-comment-line-regexp ":[0-9]+: *#")

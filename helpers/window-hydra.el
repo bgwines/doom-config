@@ -22,7 +22,7 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←  ^ ^          | _o_/_k_: other
   ("B" hydra-move-splitter-left)
   ("0" balance-windows)
 
-  ("y" delete-window :exit window-hydra-should-exit)
+  ("y" window-hydra-delete-window :exit window-hydra-should-exit)
   ("o" ace-delete-window-wrapper :exit window-hydra-should-exit)
   ("k" ace-delete-window-wrapper :exit window-hydra-should-exit)
   ("O" delete-other-windows :exit t)
@@ -39,6 +39,11 @@ _-_: horizontal | _s_: swap   _b_: ← | _B_: ←  ^ ^          | _o_/_k_: other
 
   ("q" window-hydra-exit :exit t)
   ("," window-hydra-exit :exit t))
+
+(defun window-hydra-delete-window ()
+  (interactive)
+  (delete-window)
+  (balance-windows))
 
 (defun ace-swap-window-wrapper ()
   (interactive)

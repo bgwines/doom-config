@@ -345,8 +345,13 @@
 ;; assorted ;;
 ;;;;;;;;;;;;;;
 
-(after! pixel-scroll-precision-mode
-  (pixel-scroll-precision-mode))
+;;(after! pixel-scroll-precision-mode
+;;  (pixel-scroll-precision-mode))
+(after! ultra-scroll
+  (setq scroll-conservatively 101 ; important!
+        scroll-margin 0)
+  (ultra-scroll-mode 1)
+)
 
 ;; temp
 ;;(with-eval-after-load 'docker-tramp
@@ -394,7 +399,12 @@
   (setq yas-snippet-dirs
         '("~/.config/doom/yasnippets"))
   (add-hook 'prog-mode-hook #'yas-minor-mode)
-  (add-hook 'prog-mode-hook #'yas-reload-all))
+  (add-hook 'prog-mode-hook #'yas-reload-all)
+  (global-set-key (kbd "M-a") #'yas-next-field-or-maybe-expand)
+  (define-key yas-minor-mode-map (kbd "M-a") yas-maybe-expand)
+
+  (yas-global-mode 1))
+
 
 ;;;;;;;;;;;;;;
 ;; flycheck ;;
