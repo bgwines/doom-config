@@ -335,23 +335,27 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; automatically save buffers associated with files on buffer switch
-;; and on windows switch
+;; , windows switch, and `next-error'
 (defadvice switch-to-buffer (before save-buffer-now activate)
   (when buffer-file-name (save-buffer)))
 (defadvice other-window (before other-window-now activate)
   (when buffer-file-name (save-buffer)))
+(defadvice next-error (before other-window-now activate)
+  (when buffer-file-name (save-buffer)))
+(add-hook 'next-error-hook 'save-buffer)
+
 
 ;;;;;;;;;;;;;;
 ;; assorted ;;
 ;;;;;;;;;;;;;;
 
-;;(after! pixel-scroll-precision-mode
-;;  (pixel-scroll-precision-mode))
-(after! ultra-scroll
-  (setq scroll-conservatively 101 ; important!
-        scroll-margin 0)
-  (ultra-scroll-mode 1)
-)
+(after! pixel-scroll-precision-mode
+  (pixel-scroll-precision-mode))
+;;(after! ultra-scroll
+;;  (setq scroll-conservatively 101 ; important!
+;;        scroll-margin 0)
+;;  (ultra-scroll-mode 1)
+;;)
 
 ;; temp
 ;;(with-eval-after-load 'docker-tramp
